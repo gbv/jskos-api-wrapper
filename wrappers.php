@@ -27,8 +27,8 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $request)) {
 echo "<h1>Available wrappers</h1>";
 echo "<ul>";
 foreach (scandir('wrappers') as $name) {
-    if (substr($name,0,1) != '.') {
-        $name = substr($name, 0, -4);
+    if (preg_match('/^([^.].+)\.php$/', $name, $match)) {
+        $name = $match[1];
         echo "<li>";
         echo "<a href='$name'>$name</a>";
         echo "</li>";
