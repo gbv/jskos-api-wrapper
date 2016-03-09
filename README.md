@@ -1,5 +1,9 @@
-This repository contains wrappers to provide JSKOS-API for other terminology
-services.
+This repository contains sample applications that make use of the [jskos PHP
+library](https://packagist.org/packages/gbv/jskos) to process knowledge
+organization systems in [JSKOS format](https://gbv.github.io/jskos/).
+
+[![Build Status](https://img.shields.io/travis/gbv/jskos-php-examples.svg)](https://travis-ci.org/gbv/jskos-php-examples)
+[![Coverage Status](https://coveralls.io/repos/gbv/jskos-php-examples/badge.svg?branch=master)](https://coveralls.io/r/gbv/jskos-php-examples)
 
 # Usage
 
@@ -20,6 +24,10 @@ You can directly serve wrappers via PHP for testing (don't use for production!):
 * <http://localhost:8080/OpenSKOS?uri=http://id.loc.gov/authorities/subjects/sh2007003224>
 * <http://localhost:8080/OpenSKOS?notation=1500>
 
+### GND Wrapper
+
+* <http://localhost:8080/GND?notation=118540475>
+* <http://localhost:8080/GND?uri=http://d-nb.info/gnd/118509624>
 
 # Installation
 

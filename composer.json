@@ -10,6 +10,9 @@
     "scripts": {
         "test": [
             "vendor/bin/phpunit tests"
+        ],
+        "travis-test": [
+            "vendor/bin/phpunit tests --coverage-clover build/logs/clover.xml"
         ]
     }
 }
