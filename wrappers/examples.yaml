@@ -1,0 +1,13 @@
+GND:
+    examples:
+      - notation: 118509624
+        
+# TODO: fixme!
+#      - uri: http://d-nb.info/gnd/118509624
+
+OpenSKOS:
+    examples:
+      - uri: http://data.europeana.eu/concept/loc
+      - uri: http://id.loc.gov/authorities/subjects/sh2007003224
+      - notation: 1500
+

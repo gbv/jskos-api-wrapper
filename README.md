@@ -14,20 +14,13 @@ First install dependencies with [composer](https://getcomposer.org/):
 
 You can directly serve wrappers via PHP for testing (don't use for production!):
 
-    $ php -S localhost:8080 wrappers.php
+    $ php -S localhost:8080 -t wrappers
 
-## Examples
+The examples can also be tried online at 
 
-### OpenSKOS API Wrapper
+<https://jskos-php-examples.herokuapp.com>
 
-* <http://localhost:8080/OpenSKOS?uri=http://data.europeana.eu/concept/loc>
-* <http://localhost:8080/OpenSKOS?uri=http://id.loc.gov/authorities/subjects/sh2007003224>
-* <http://localhost:8080/OpenSKOS?notation=1500>
-
-### GND Wrapper
-
-* <http://localhost:8080/GND?notation=118540475>
-* <http://localhost:8080/GND?uri=http://d-nb.info/gnd/118509624>
+(may be out of date).
 
 # Installation
 
