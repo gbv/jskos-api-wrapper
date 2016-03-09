@@ -7,7 +7,6 @@ Thumbs.db
 vendor/
 phpunit.xml
 composer.phar
-composer.lock
 
 doc/
 build/
