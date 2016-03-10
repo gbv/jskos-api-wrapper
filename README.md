@@ -14,12 +14,12 @@ First install dependencies with [composer](https://getcomposer.org/):
 
 You can directly serve wrappers via PHP for testing (don't use for production!):
 
-    $ php -S localhost:8080 -t wrappers
+    $ php -S localhost:8080 -t src
+
+And accesed via <http://localhost:8080>.
 
 The examples can also be tried online at 
-
 <https://jskos-php-examples.herokuapp.com>
-
 (may be out of date).
 
 # Installation

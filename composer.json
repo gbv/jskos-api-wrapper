@@ -10,7 +10,10 @@
     },
     "scripts": {
         "test": [
-            "vendor/bin/phpunit tests"
+            "vendor/bin/phpunit tests --tap"
+        ],
+        "debug-test": [
+            "vendor/bin/phpunit tests --debug"
         ],
         "travis-test": [
             "vendor/bin/phpunit tests --coverage-clover build/logs/clover.xml"

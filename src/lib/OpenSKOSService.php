@@ -2,21 +2,19 @@
 
 /**
  * Draft of a JSKOS wrapper to Europeana OpenSKOS API.
+ * Converts JSON-LD of Europeana EDM to JSKOS.
  */
 
-include realpath(__DIR__.'/..') . '/vendor/autoload.php';
+include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
 
 use JSKOS\Service;
-use JSKOS\Server;
 use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\Page;
+use JSKOS\Error;
 
-const DEBUG = 1;
+const DEBUG = 0; # TODO: use logger instead
 
-/**
- * Convert JSON-LD of Europeana EDM to JSKOS
- */
 function EDM2JSKOS($edm) {
     if (empty($edm)) return;
 
@@ -59,7 +57,6 @@ function EDM2JSKOS($edm) {
 /**
  * Escape special characters used in Lucene Query Parser Syntax.
  */
-
 function escapeLuceneQuery($string) {
     return preg_replace(
         '/([*+&|!(){}\[\]^"~*?:\\-])/',
@@ -71,46 +68,46 @@ function escapeLuceneQuery($string) {
 /**
  * Wrap JSKOS-API request to OpenSKOS API request and response.
  */
-function OpenSKOSWrapper($query) {
-
-    $params = [];  // OpenSKOS API parameter
-    $result = [];  // list of JSKOS objects
-
-    if (isset($query['uri'])) {
-        $params['id'] = $query['uri'];
-    }
-
-    if (isset($query['notation'])) {
-        // TODO: cleanup special characters such as '['
-        $params['q'] = 'notation:'.escapeLuceneQuery($query['notation']);
-    }
-
-    if (empty($params)) {
-        return new Page();
-    }
-
-    # get entity via OpenSKOS API
-    $params['format'] = 'json';
-    $url = 'http://skos.europeana.eu/api/find-concepts';
-    $url .= '?' . http_build_query($params);
-    if (DEBUG) error_log($url);
-    $json = @json_decode(@file_get_contents($url));
-
-    // multiple records or single record result set?
-    $records = isset($json->response)
-             ? $json->response->docs : [ $json ];
-
-    foreach( $records as $edm) {
-        $jskos = EDM2JSKOS($edm);
-        if($jskos) $result[] = $jskos;
-    }
+class OpenSKOSService extends Service {
     
-    return new Page($result);
+    protected $supportedParameters = ['notation'];
+
+    function query($query) {
+
+        $params = [];  // OpenSKOS API parameter
+        $result = [];  // list of JSKOS objects
+
+        if (isset($query['uri'])) {
+            $params['id'] = $query['uri'];
+        }
+
+        if (isset($query['notation'])) {
+            // TODO: cleanup special characters such as '['
+            $params['q'] = 'notation:'.escapeLuceneQuery($query['notation']);
+        }
+
+        if (empty($params)) {
+            return new Page();
+        }
+
+        # get entity via OpenSKOS API
+        $params['format'] = 'json';
+        $url = 'http://skos.europeana.eu/api/find-concepts';
+        $url .= '?' . http_build_query($params);
+        if (DEBUG) error_log($url);
+        $json = @json_decode(@file_get_contents($url));
+
+        // multiple records or single record result set?
+        $records = isset($json->response)
+                 ? $json->response->docs : [ $json ];
+
+        foreach( $records as $edm) {
+            $jskos = EDM2JSKOS($edm);
+            if($jskos) $result[] = $jskos;
+        }
+        
+        return new Page($result);
+    }
+
 }
 
-$service = new Service('OpenSKOSWrapper');
-$service->supportParameter('notation');
-# TODO: support more parameters
-
-$server = new Server($service);
-$server->run();
