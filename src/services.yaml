@@ -16,3 +16,8 @@ Wikidata:
     url: https://www.wikidata.org/
     examples:
       - notation: Q42
+
+BARTOC:
+    url: http://bartoc.org/
+    examples:
+      - uri: http://bartoc.org/en/node/430
