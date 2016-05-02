@@ -1,14 +1,52 @@
 <?php
 
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Mapping of RDF data to JSKOS object.
+ *
+ * The mapping is controlled by a mapping of JSKOS field names
+ * to RDF properties with some additional configuration. 
+ */
 class JSKOSRDFMapping {
 
-    protected $map;
+    /**
+     * The actual mapping
+     * @var array
+     */
+    public $map;
 
+    /**
+     * Create a mapping from array or YAML file.
+     */ 
     public function __construct($map) {
+        if (is_string($map)) {
+            $yaml = Yaml::parse(file_get_contents($map));
+            if (!$yaml) {
+                throw new Exception("Failed to load YAML from $map");
+            }
+            $map = $yaml;
+        }
+
+        if ($map['_ns']) {
+            foreach ($map['_ns'] as $prefix => $namespace) {
+                # TODO: warn if prefix already defined!
+                EasyRdf_Namespace::set($prefix, $namespace);
+            }
+            unset($map['_ns']);
+        }
+
         $this->map = $map;
     }
 
-    public function rdf2jskos($rdf, $jskos) {
+    /**
+     * Apply mapping via extraction of data from an RDF resource and add 
+     * resulting data to a JSKOS Object.
+     *
+     * @param EasyRdf_Resource rdf
+     * @param JSKOS\Object jskos
+     */
+    public function rdf2jskos(EasyRdf_Resource $rdf, \JSKOS\Object $jskos) {
         foreach ($this->map as $property => $mapping)
         {
             $type = $mapping['type'];
@@ -40,7 +78,7 @@ class JSKOSRDFMapping {
 
                         $jskos->$property = $languageMap;
                     }
-                } elseif ($type == 'datatype') {
+                } elseif ($type == 'plain') {
                     foreach ( $rdf->allLiterals($rdfProperty) as $literal ) {
                         $value = (string)$literal;
                         if (!isset($jskos->$property)) {

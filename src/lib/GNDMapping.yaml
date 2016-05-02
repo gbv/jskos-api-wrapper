@@ -1,0 +1,47 @@
+---
+_ns:
+    gnd: http://d-nb.info/standards/elementset/gnd#
+broader:
+    type: URI
+    properties:
+        - gnd:broaderTermPartitive
+related:
+    type: URI
+    properties:
+        - gnd:accordingWork
+        - gnd:acquaintanceshipOrFriendship
+relatedPlace:
+    type: URI
+    properties:
+        - gnd:associatedPlace
+        - gnd:characteristicPlace
+        - gnd:otherPlace
+        - gnd:spatialAreaOfActivity
+        - gnd:relatedPlaceOrGeographicName
+        - gnd:place
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - gnd:preferredName
+        - gnd:preferredNameForThePerson
+        - gnd:preferredNameForTheConferenceOrEvent
+        - gnd:preferredNameForThePlaceOrGeographicName
+        - gnd:preferredNameForTheFamily
+        - gnd:preferredNameForTheSubjectHeading
+        - gnd:preferredNameForTheCorporateBody
+        - gnd:preferredNameForTheWork
+scopeNote:
+    type: literal
+    properties:
+        - gnd:biographicalOrHistoricalInformation
+definition:
+    type: literal
+    properties:
+        - gnd:definition
+relatedDate:
+    type: plain
+    properties:
+        - gnd:associatedDate
+        - gnd:dateOfDiscovery
+        - gnd:periodOfActivity

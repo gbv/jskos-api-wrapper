@@ -1,0 +1,29 @@
+---
+_ns:
+    gn: http://www.geonames.org/ontology#
+
+broader:
+    type: URI
+    properties:
+        - gn:parentFeature
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - gn:officialName
+altLabel:
+    type: literal
+    properties:
+        - gn:alternateName
+notation:
+    type: plain
+    properties:
+        - gn:countryCode
+ 
+# TODO: lat/ling should better be a list of positions
+#latitude:
+#    type: literal
+#    properties: wgs84_pos:lat ]
+#longitude:
+#    type: literal
+#    properties: wgs84_pos:long ]
