@@ -39,6 +39,10 @@ class ServicesTest extends PHPUnit_Framework_TestCase {
                 "$name can be queried" 
             );
 
+            if (isset($this->services[$name]['secret'])) {
+                continue;
+            }
+
             if (isset($this->services[$name]['examples'])) {
                 foreach( $this->services[$name]['examples'] as $example ) {
                     $response = $service->query($example);

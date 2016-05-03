@@ -43,7 +43,21 @@ include '../vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 $services = Yaml::parse(file_get_contents('services.yaml'));
 
-foreach ($services as $name => $service) { 
+foreach ($services as $name => $service) 
+{ 
+
+    if (isset($service['secret'])) {
+        foreach ($service['secret'] as $secret) {
+            if (!getenv($secret)) {
+                error_log("missing secret $secret");
+                $missing_secret = 1;
+            }
+        }
+        if (isset($missing_secret)) {
+            continue;
+        }
+    }
+
     $source = "src/lib/${name}Service.php";
 ?>
     <h3><?= $name ?><small>

@@ -15,7 +15,7 @@ use JSKOS\Error;
 
 class GeonamesService extends Service {
     use RDFTrait;
-    use IDtrait;
+    use IDTrait;
 
     protected $supportedParameters = ['notation'];
 

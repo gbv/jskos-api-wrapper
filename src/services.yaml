@@ -24,6 +24,15 @@ Geonames:
       - notation: 614540 
       - uri: http://sws.geonames.org/2918632/
 
+ORCID:
+    url: http://orcid.org/
+    secret:
+      - ORCID_CLIENT_ID
+      - ORCID_CLIENT_SECRET
+    examples:
+      - notation: 0000-0002-7613-4123
+      - uri: http://orcid.org/0000-0002-1825-0097
+
 BARTOC:
     url: http://bartoc.org/
     examples:
