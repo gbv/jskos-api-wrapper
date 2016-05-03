@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>JSKOS-PHP Examples</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -32,8 +31,10 @@
 <h2>Terminology Services</h2>
 <p>
     The following web services wrap existing terminology databases to provide
-    access via <a href="https://gbv.github.io/jskos-api">JSKOS-API</a>.
-    JSKOS-API is far from being finally specified, so this is a preview.
+    <b>access via <a href="http://gbv.github.io/elma/">Entity Lookup Microservice API (ELMA)</a></b>
+    for simple access and its superset 
+    <a href="https://gbv.github.io/jskos-api">JSKOS-API</a> (as it is beeing specified)
+    for more complex queries.
 </p>
 <?php
 
@@ -79,13 +80,16 @@ foreach ($services as $name => $service) {
 }
 ?>
 
-<hr>
+<h2>Status</h2>
 <a href="https://travis-ci.org/gbv/jskos-php-examples">
   <img src="https://travis-ci.org/gbv/jskos-php-examples.svg?branch=master">
 </a>
 <a href="https://coveralls.io/r/gbv/jskos-php-examples">
   <img src="https://coveralls.io/repos/github/gbv/jskos-php-examples/badge.svg?branch=master">
 </a>
+<p>
+  Please have a look at the source code and <a href="https://github.com/gbv/jskos-php-examples/issues">suggest more KOS</a>!
+</p>
 
     </div>
   </body>

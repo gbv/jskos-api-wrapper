@@ -1,6 +1,10 @@
 This repository contains sample applications that make use of the [jskos PHP
 library](https://packagist.org/packages/gbv/jskos) to process knowledge
-organization systems in [JSKOS format](https://gbv.github.io/jskos/).
+organization systems (KOS) in [JSKOS format](https://gbv.github.io/jskos/). In
+particular there is a set of **wrappers to access different KOS via a uniform
+API**. The uniform API is specified as [Entity Lookup Microservice API
+(ELMA)](http://gbv.github.io/elma/) for simple access and will be extended to
+[JSKOS-API](https://gbv.github.io/jskos-api/) for more complex queries.
 
 [![Build Status](https://img.shields.io/travis/gbv/jskos-php-examples.svg)](https://travis-ci.org/gbv/jskos-php-examples)
 [![Coverage Status](https://coveralls.io/repos/gbv/jskos-php-examples/badge.svg?branch=master)](https://coveralls.io/r/gbv/jskos-php-examples)
