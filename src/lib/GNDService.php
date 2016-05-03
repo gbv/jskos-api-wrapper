@@ -1,12 +1,14 @@
 <?php
 
 /**
- * JSKOS-API Wrapper to GND via LOD access via URI.
+ * Implements a basic JSKOS concepts endpoint for GND.
+ *
+ * The wrapper converts GND RDF/XML to JSKOS.
  */
 
 include_once realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/JSKOSRDFMapping.php';
 include_once realpath(__DIR__).'/RDFTrait.php';
+include_once realpath(__DIR__).'/IDTrait.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
@@ -15,74 +17,46 @@ use JSKOS\Error;
 
 class GNDService extends Service {
     use RDFTrait;
+    use IDtrait;
     
     protected $supportedParameters = ['notation'];
-
-    static $mapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        if (!static::$mapping) {
-            $file = __DIR__.'/GNDMapping.yaml';
-            static::$mapping = new JSKOSRDFMapping($file);
-        }
+        $this->loadMapping(__DIR__.'/GNDMapping.yaml');
         parent::__construct();
     }
 
     public function query($query) {
+        
+        $id = $this->idFromQuery($query, '/^http:\/\/d-nb\.info\/gnd\/([0-9X-]+)$/', '/^[0-9X-]+$/');
 
-        if (isset($query['uri'])) {
-            if (preg_match('/^http:\/\/d-nb\.info\/gnd\/([0-9X-]+)$/', $query['uri'], $match)) {
-                $id = $match[1];
-            }
+        if (isset($id)) {
+            $uri = "http://d-nb.info/gnd/$id";
+        } else {
+            return;
         }
-            
-        if (isset($query['notation'])) {
-            if (preg_match('/^[0-9X-]+$/', $query['notation'])) {
-                $notation = strtoupper($query['notation']);
-                if (isset($id) and $id != $notation) {
-                    unset($id);
-                } else {
-                    $id = $notation;
-                }
-            }
-        }
-
-        if (!isset($id)) {
-            return null;
-        }
-
-        $uri = "http://d-nb.info/gnd/$id";
     
-        $rdf = new EasyRdf_Graph();
-        try {
-            // TODO: use newAndLoad($uri);
-            $rdf->load("$uri/about/lds","rdfxml");
-            $gnd = $rdf->resource($uri);
-        } catch (Exception $e){
-            // not found or some error at DNB
-            return null;
-        }
+        # error_log("$uri");
 
-        if ($rdf->isEmpty() or !$gnd) {
-            return null;
-        }
+        $rdf = $this->loadRDF("$uri/about/lds", $uri, "rdfxml");
+        if (!$rdf) return;
+
+        # error_log($rdf->getGraph()->serialise('turtle'));
 
         $jskos = new Concept(['uri'=>$uri, 'notation' => [$id]]);
 
-        foreach ( $gnd->allResources('owl:sameAs') as $id ) {
+        foreach ( $rdf->allResources('owl:sameAs') as $id ) {
             $jskos->identifier[] = "$id";
         }
  
-        foreach ( $gnd->typesAsResources() as $type ) {
+        foreach ( $rdf->typesAsResources() as $type ) {
             $jskos->type[] = (string)$type;
         }
 
-        #error_log($rdf->serialise('turtle'));
-
-        static::$mapping->rdf2jskos($gnd, $jskos); 
+        $this->rdf2jskos($rdf, $jskos, 'de'); 
 
         return $jskos;
     }

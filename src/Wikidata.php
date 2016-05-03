@@ -1,6 +1,7 @@
 <?php
 
-include realpath(__DIR__) . '/lib/WikidataService.php';
+$service = 'WikidataService';
 
-\JSKOS\Server::runService(new WikidataService());
+include realpath(__DIR__) . "/lib/$service.php";
+\JSKOS\Server::runService(new $service());
 

@@ -5,8 +5,8 @@
  */
 
 include_once realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/JSKOSRDFMapping.php';
 include_once realpath(__DIR__).'/RDFTrait.php';
+include_once realpath(__DIR__).'/IDTrait.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
@@ -15,21 +15,15 @@ use JSKOS\Error;
 
 class GeonamesService extends Service {
     use RDFTrait;
+    use IDtrait;
 
     protected $supportedParameters = ['notation'];
-
-    static $mapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        # TODO: move into trait:
-        # $this->setMapping(__DIR__.'/GeonamesMapping.yaml');
-        if (!static::$mapping) {
-            $file = __DIR__.'/GeonamesMapping.yaml';
-            static::$mapping = new JSKOSRDFMapping($file);
-        }
+        $this->loadMapping(__DIR__.'/GeonamesMapping.yaml');
         parent::__construct();
     }
 
@@ -38,41 +32,24 @@ class GeonamesService extends Service {
      */ 
     public function query($query) {
 
-        if (isset($query['uri'])) {
-            if (preg_match('/^http:\/\/sws\.geonames\.org\/([0-9]+)\/$/', $query['uri'], $match)) {
-                $id = $match[1];
-            }
-        }
-            
-        if (isset($query['notation'])) {
-            if (preg_match('/^[0-9]+$/', $query['notation'])) {
-                $notation = strtoupper($query['notation']);
-                if (isset($id) and $id != $notation) {
-                    unset($id);
-                } else {
-                    $id = $notation;
-                }
-            }
-        }
+        $id = $this->idFromQuery($query, '/^http:\/\/sws\.geonames\.org\/([0-9]+)\/$/', '/^[0-9]+$/');
+        $jskos = null;
 
-        if (!isset($id)) {
-            return null;
-        }
+        // get concept by notation and/or uri
+        if (isset($id)) {
+            $uri = "http://sws.geonames.org/$id/";
 
-        $uri = "http://sws.geonames.org/$id/";
-    
-        $rdf = $this->loadRDF($uri);
-        if (!$rdf) {
-            return;
-        }
+            $rdf = $this->loadRDF($uri);
+            if (!$rdf) return;
 
-        $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
+            $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
 
-        // TODO: get childrenFeatures if requested
-        // TODO: modified, created, license
+            // TODO: get childrenFeatures if requested
+            // TODO: modified, created, license
         
-        static::$mapping->rdf2jskos($rdf, $jskos); 
-
+            $this->rdf2jskos($rdf, $jskos); 
+        }
+ 
         return $jskos;
     }
 }

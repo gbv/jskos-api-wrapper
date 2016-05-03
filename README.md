@@ -20,7 +20,9 @@ You can directly serve wrappers via PHP for testing (don't use for production!):
 
     $ php -S localhost:8080 -t src
 
-And accesed via <http://localhost:8080>.
+And accesed via <http://localhost:8080>. You can also start the server with
+
+    $ make run
 
 # Installation
 

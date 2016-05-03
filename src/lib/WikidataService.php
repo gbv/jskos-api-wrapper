@@ -8,6 +8,7 @@
  */
 
 include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
+include_once realpath(__DIR__).'/IDTrait.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
@@ -15,6 +16,7 @@ use JSKOS\Page;
 use JSKOS\Error;
 
 class WikidataService extends Service {
+    use IDTrait;
     
     protected $supportedParameters = ['notation'];
 
@@ -22,23 +24,8 @@ class WikidataService extends Service {
      * Query via MediaWikiAPI. TODO: use SPARQL for complex queries
      */
     public function query($query) {
-
-        if (isset($query['uri'])) {
-            if (preg_match('/^http:\/\/www\.wikidata\.org\/entity\/([PQ][0-9]+)$/', $query['uri'], $match)) {
-                $id = $match[1];
-            }
-        }
-            
-        if (isset($query['notation'])) {
-            if (preg_match('/^[QP][0-9]+$/i', $query['notation'])) {
-                $notation = strtoupper($query['notation']);
-                if (isset($id) and $id != $notation) {
-                    unset($id);
-                } else {
-                    $id = $notation;
-                }
-            }
-        }
+        $id = $this->idFromQuery($query, 
+            '/^http:\/\/www\.wikidata\.org\/entity\/([PQ][0-9]+)$/', '/^([PQ][0-9]+)$/');
 
         if (isset($id)) {
             try {

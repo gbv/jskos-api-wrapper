@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Implements a basic JSKOS concept schemes endpoint for BARTOC.
  * @package JSKOS
  */
 
 include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
+include_once realpath(__DIR__).'/RDFTrait.php';
+include_once realpath(__DIR__).'/IDTrait.php';
 
 use JSKOS\Service;
 use JSKOS\ConceptScheme;
@@ -26,48 +29,44 @@ function getUris( $subject, $predicate, $pattern = null ) {
 }
 
 class BARTOCService extends Service {
+    use RDFTrait;
+    use IDTrait;
     
-    protected $supportedParameters = ['search'];
+    protected $supportedParameters = ['notation','search'];
 
     public function query($query) {
-        if (isset($query['uri'])) {
-            return $this->lookupByURI($query['uri']);
+        $id = $this->idFromQuery($query, '/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', '/^[0-9]+$/');
+        if (isset($id)) {
+            return $this->lookupByURI("http://bartoc.org/en/node/$id");
         } elseif (isset($query['search'])) {
             return new Page( $this->search($query['search']) );
+        } else {
+            return;
         }
     }
 
     public function lookupByURI($uri) {
-        if ( !preg_match('/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', $uri) ) {
-            return;
-        }
-
-        try { 
-            $rdf = EasyRdf_Graph::newAndLoad($uri); 
-            $bartoc = $rdf->resource($uri);
-            if (!$bartoc) {
-                return;
-            } 
-        } catch( Exception $e ) {
-            return;
-        }
+        $rdf = $this->loadRDF($uri);
+        if (!$rdf) return;
 
         $scheme = new ConceptScheme(['uri' => $uri]);
 
+        # TODO: use RDF mapping file from YAML instead
+
         # url
-        foreach ( getUris($bartoc, 'foaf:page') as $url ) {
+        foreach ( getUris($rdf, 'foaf:page') as $url ) {
             if (substr($url,0,26) != 'http://bartoc.org/en/node/') {
                 $scheme->url = $url;
             }
         }
 
         # Wikidata item
-        foreach ( getUris($bartoc, 'dc:relation', '/^http:\/\/www\.wikidata\.org\/entity\/Q[0-9]+$/') as $uri ) {
+        foreach ( getUris($rdf, 'dc:relation', '/^http:\/\/www\.wikidata\.org\/entity\/Q[0-9]+$/') as $uri ) {
             $scheme->identifier = [ $uri ];
         }
 
         # prefLabel and notation (FIXME: language is not always English)
-        foreach ($bartoc->allLiterals('schema:name') as $name) {
+        foreach ($rdf->allLiterals('schema:name') as $name) {
             $name = $name->getValue();
             if (preg_match('/^[A-Z]{2,5}$/', $name)) {
                 $scheme->notation = [ $name ];

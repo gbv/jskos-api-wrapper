@@ -1,12 +1,7 @@
 <?php
 
-/**
- * Implements a basic JSKOS concepts endpoint for Geonames.
- *
- * @package JSKOS
- */
+$service = 'GeonamesService';
 
-include realpath(__DIR__) . '/lib/GeonamesService.php';
-
-\JSKOS\Server::runService(new GeonamesService());
+include realpath(__DIR__) . "/lib/$service.php";
+\JSKOS\Server::runService(new $service());
 

@@ -1,6 +1,7 @@
 <?php
 
-include realpath(__DIR__) . '/lib/OpenSKOSService.php';
+$service = 'OpenSKOSService';
 
-\JSKOS\Server::runService(new OpenSKOSService());
+include realpath(__DIR__) . "/lib/$service.php";
+\JSKOS\Server::runService(new $service());
 
