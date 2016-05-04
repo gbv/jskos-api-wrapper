@@ -6,9 +6,7 @@
  * The wrapper converts GND RDF/XML to JSKOS.
  */
 
-include_once realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/RDFTrait.php';
-include_once realpath(__DIR__).'/IDTrait.php';
+include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
@@ -17,7 +15,7 @@ use JSKOS\Error;
 
 class GNDService extends Service {
     use RDFTrait;
-    use IDtrait;
+    use IDTrait;
     
     protected $supportedParameters = ['notation'];
 

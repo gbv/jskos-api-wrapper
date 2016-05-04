@@ -1,7 +1,3 @@
-<?php
-
-$service = 'BARTOCService';
-
-include realpath(__DIR__) . "/lib/$service.php";
-\JSKOS\Server::runService(new $service());
-
+<?php 
+include __DIR__.'/../vendor/autoload.php';
+\JSKOS\Server::runService(new BARTOCService());

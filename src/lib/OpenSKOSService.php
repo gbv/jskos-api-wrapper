@@ -5,7 +5,7 @@
  * Converts JSON-LD of Europeana EDM to JSKOS.
  */
 
-include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
+include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;

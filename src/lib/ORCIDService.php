@@ -4,8 +4,7 @@
  * JSKOS-API Wrapper to ORCID.
  */
 
-include_once realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/IDTrait.php';
+include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;

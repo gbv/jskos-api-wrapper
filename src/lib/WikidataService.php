@@ -1,10 +1,9 @@
 <?php
+
 /**
  * Implements a basic JSKOS concepts endpoint for Wikidata.
  *
  * This wrapper converts Wikidata JSON format to JSKOS.
- *
- * @package JSKOS
  */
 
 include realpath(__DIR__.'/../..') . '/vendor/autoload.php';

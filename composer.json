@@ -1,5 +1,15 @@
 {
-    "name": "JSKOS-API Wrappers",
+    "name": "JSKOS-PHP examples",
+    "description": "JSKOS-API Wrappers and other terminology applications based on JSKOS",
+    "type": "project",
+    "homepage": "https://jskos-php-examples.herokuapp.com/",
+    "authors": [
+        {
+            "name": "Jakob Voß",
+            "email": "voss@gbv.de"
+        }
+    ],
+    "license": "GPL-3.0+",
     "require": {
         "gbv/jskos": "^0.0.8",
         "easyrdf/easyrdf": "^0.9.1",
@@ -8,6 +18,11 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src/lib/"
+        }
     },
     "scripts": {
         "test": [

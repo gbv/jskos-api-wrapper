@@ -1,13 +1,10 @@
 <?php
 
 /**
- * Implements a basic JSKOS concept schemes endpoint for BARTOC.
- * @package JSKOS
+ * Basic JSKOS concept schemes endpoint for BARTOC.org.
  */
 
-include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/RDFTrait.php';
-include_once realpath(__DIR__).'/IDTrait.php';
+include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\ConceptScheme;

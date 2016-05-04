@@ -1,7 +1,3 @@
 <?php
-
-$service = 'ORCIDService';
-
-include realpath(__DIR__) . "/lib/$service.php";
-\JSKOS\Server::runService(new $service());
-
+include __DIR__.'/../vendor/autoload.php';
+\JSKOS\Server::runService(new ORCIDService());
