@@ -32,6 +32,7 @@ ORCID:
     examples:
       - notation: 0000-0002-7613-4123
       - uri: http://orcid.org/0000-0002-1825-0097
+      - search: Carberry
 
 BARTOC:
     url: http://bartoc.org/

@@ -45,16 +45,13 @@ $services = Yaml::parse(file_get_contents('services.yaml'));
 
 foreach ($services as $name => $service) 
 { 
-
+    $missingSecrets = [];
     if (isset($service['secret'])) {
         foreach ($service['secret'] as $secret) {
             if (!getenv($secret)) {
                 error_log("missing secret $secret");
-                $missing_secret = 1;
+                $missingSecrets[] = $secret;
             }
-        }
-        if (isset($missing_secret)) {
-            continue;
         }
     }
 
@@ -75,7 +72,12 @@ foreach ($services as $name => $service)
     </p> 
 <?php } 
     $queryExamples= $service['examples'];
-    if ($queryExamples) {
+
+    if (count($missingSecrets)) {
+        echo "<p><em>access requires secret environment config variables:</em> ";
+        echo implode(", ",$missingSecrets);
+        echo "</p>";
+    } else if ($queryExamples) {
         echo "<table class='table table-condensed'>";
         echo "<thead><tr><th>sample queries to <a href='$name.php'>JSKOS-API endpoint</a></th></tr></thead>";
         echo "<tr>";

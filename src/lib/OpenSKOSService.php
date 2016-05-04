@@ -55,20 +55,10 @@ function EDM2JSKOS($edm) {
 }
 
 /**
- * Escape special characters used in Lucene Query Parser Syntax.
- */
-function escapeLuceneQuery($string) {
-    return preg_replace(
-        '/([*+&|!(){}\[\]^"~*?:\\-])/',
-        '\\\\$1',
-        $string 
-    );
-}
-
-/**
  * Wrap JSKOS-API request to OpenSKOS API request and response.
  */
 class OpenSKOSService extends Service {
+    use LuceneTrait;
     
     protected $supportedParameters = ['notation'];
 
@@ -82,8 +72,7 @@ class OpenSKOSService extends Service {
         }
 
         if (isset($query['notation'])) {
-            // TODO: cleanup special characters such as '['
-            $params['q'] = 'notation:'.escapeLuceneQuery($query['notation']);
+            $params['q'] = $this->luceneQuery('notation',$query['notation']);
         }
 
         if (empty($params)) {
