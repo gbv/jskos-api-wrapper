@@ -26,7 +26,6 @@ function getUris( $subject, $predicate, $pattern = null ) {
 }
 
 class BARTOCService extends Service {
-    use RDFTrait;
     use IDTrait;
     
     protected $supportedParameters = ['notation','search'];
@@ -43,7 +42,7 @@ class BARTOCService extends Service {
     }
 
     public function lookupByURI($uri) {
-        $rdf = $this->loadRDF($uri);
+        $rdf = RDFMapper::loadRDF($uri);
         if (!$rdf) return;
 
         $scheme = new ConceptScheme(['uri' => $uri]);

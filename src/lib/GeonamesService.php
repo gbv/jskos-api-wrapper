@@ -12,16 +12,17 @@ use JSKOS\Page;
 use JSKOS\Error;
 
 class GeonamesService extends Service {
-    use RDFTrait;
     use IDTrait;
 
     protected $supportedParameters = ['notation'];
+
+    private $rdfMapper;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->loadMapping(__DIR__.'/GeonamesMapping.yaml');
+        $this->rdfMapper = new RDFMapper(__DIR__.'/GeonamesMapping.yaml');
         parent::__construct();
     }
 
@@ -37,7 +38,7 @@ class GeonamesService extends Service {
         if (isset($id)) {
             $uri = "http://sws.geonames.org/$id/";
 
-            $rdf = $this->loadRDF($uri);
+            $rdf = RDFMapper::loadRDF($uri);
             if (!$rdf) return;
 
             $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
@@ -45,7 +46,7 @@ class GeonamesService extends Service {
             // TODO: get childrenFeatures if requested
             // TODO: modified, created, license
         
-            $this->rdf2jskos($rdf, $jskos); 
+            $this->rdfMapper->rdf2jskos($rdf, $jskos); 
         }
  
         return $jskos;

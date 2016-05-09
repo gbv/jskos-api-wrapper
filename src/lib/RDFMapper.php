@@ -6,15 +6,18 @@ use Symfony\Component\Yaml\Yaml;
 # use EasyRDF_Graph;
 # use JSKOS\Object;
 
-trait RDFTrait 
+/**
+ * Maps RDF to JSKOS based on a YAML mapping file.
+ */
+class RDFMapper 
 {
-    public static $rdfmapping;
+    private $rdfmapping;
 
     /**
      * Silently load RDF from an URL.
      * @return EasyRDF_Resource|null
      */
-    function loadRDF($url, $uri=NULL, $format=NULL)
+    public static function loadRDF($url, $uri=NULL, $format=NULL)
     {
         try { 
             $rdf = EasyRdf_Graph::newAndLoad($url, $format); 
@@ -27,11 +30,7 @@ trait RDFTrait
     /**
      * Load mapping from YAML file and store it in a static class variable.
      */
-    function loadMapping($file) {
-        if (static::$rdfmapping) {
-            return;
-        }
-
+    public function __construct($file) {
         $map = Yaml::parse(file_get_contents($file));
         if (!$map) {
             throw new Exception("Failed to load YAML from $file");
@@ -47,7 +46,7 @@ trait RDFTrait
             unset($map['_ns']);
         }
 
-        static::$rdfmapping = $map;
+        $this->rdfmapping = $map;
     }
 
     /**
@@ -58,7 +57,7 @@ trait RDFTrait
      * @param JSKOS\Object jskos
      */
     public function rdf2jskos(EasyRdf_Resource $rdf, \JSKOS\Object $jskos, $defaultLang = 'en') {
-        foreach (static::$rdfmapping as $property => $mapping)
+        foreach ($this->rdfmapping as $property => $mapping)
         {
             $type = $mapping['type'];
 

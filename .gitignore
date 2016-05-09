@@ -5,7 +5,6 @@ Thumbs.db
 
 # PHP files 
 vendor/
-phpunit.xml
 composer.phar
 
 doc/

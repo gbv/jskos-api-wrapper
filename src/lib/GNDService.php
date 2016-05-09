@@ -14,16 +14,17 @@ use JSKOS\Page;
 use JSKOS\Error;
 
 class GNDService extends Service {
-    use RDFTrait;
     use IDTrait;
     
     protected $supportedParameters = ['notation'];
+
+    private $rdfMapper;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->loadMapping(__DIR__.'/GNDMapping.yaml');
+        $this->rdfMapper = new RDFMapper(__DIR__.'/GNDMapping.yaml');
         parent::__construct();
     }
 
@@ -39,7 +40,7 @@ class GNDService extends Service {
     
         # error_log("$uri");
 
-        $rdf = $this->loadRDF("$uri/about/lds", $uri, "rdfxml");
+        $rdf = RDFMapper::loadRDF("$uri/about/lds", $uri, "rdfxml");
         if (!$rdf) return;
 
         # error_log($rdf->getGraph()->serialise('turtle'));
@@ -54,7 +55,7 @@ class GNDService extends Service {
             $jskos->type[] = (string)$type;
         }
 
-        $this->rdf2jskos($rdf, $jskos, 'de'); 
+        $this->rdfMapper->rdf2jskos($rdf, $jskos, 'de'); 
 
         return $jskos;
     }

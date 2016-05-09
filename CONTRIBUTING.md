@@ -1,7 +1,19 @@
+## Building blocks for JSKOS Wrappers
 
-## Mapping RDF to JSKOS
+This repository contrains some helper classes and PHP traits to facilitate
+writing JSKOS Wrappers:
+
+### Checking identifier format
+
+See **IDTrait**.
+
+### Mapping RDF to JSKOS
 
 To facilitate writing wrappers from RDF to JSKOS, a mapping can be written in
-form of a YAML file.  See `GNDService`/`GNDMapping.yaml` and
-`GeonamesService`/`GeonamesMapping` for examples that make use of `RDFTrait`.
+form of a YAML file (see `*Mapping.yml` files in directory `src/lib`). The Mapping
+is implemented with class **RDFMapper**.
+
+### Passing queries to a Lucene backend
+
+See **LuceneTrait**.
 

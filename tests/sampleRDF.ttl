@@ -1,0 +1,14 @@
+# sample RDF Turtle file to test RDFMapper
+
+@prefix e: <http://example.org/> .
+
+e:c0
+    e:broader1 e:c0, e:c1 ;
+    e:broader2 e:c2 ;
+    e:prefLabel1 "concept"@en, "Begriff"@de ;
+    e:prefLabel2 "foo"@en, "bar"@de ;
+    e:altLabel1 "CONCEPT"@en, "BEGRIFF"@de ;
+    e:altLabel2 "KONZEPT"@de ;
+    e:date1 "2009-01-01" ;
+    e:date2 "2010-01-01" 
+.
