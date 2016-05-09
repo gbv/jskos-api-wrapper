@@ -76,7 +76,7 @@ class ORCIDService extends Service {
                 'Authorization' => "Bearer $token",
                 'Content-Type' => 'application/orcid+json'
             ],
-            [ 'q' => $this->luceneQuery('text',$query) ]
+            [ 'q' => LuceneTrait::luceneQuery('text',$query) ]
         );
 
         if ($response->code == 200) {

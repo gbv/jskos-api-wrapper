@@ -72,7 +72,7 @@ class OpenSKOSService extends Service {
         }
 
         if (isset($query['notation'])) {
-            $params['q'] = $this->luceneQuery('notation',$query['notation']);
+            $params['q'] = LuceneTrait::luceneQuery('notation',$query['notation']);
         }
 
         if (empty($params)) {
