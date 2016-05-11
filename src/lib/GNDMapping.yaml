@@ -3,15 +3,18 @@ _ns:
     gnd: http://d-nb.info/standards/elementset/gnd#
 broader:
     type: URI
+    jskos: Concept
     properties:
         - gnd:broaderTermPartitive
 related:
     type: URI
+    jskos: Concept
     properties:
         - gnd:accordingWork
         - gnd:acquaintanceshipOrFriendship
 relatedPlace:
     type: URI
+    jskos: Concept
     properties:
         - gnd:associatedPlace
         - gnd:characteristicPlace

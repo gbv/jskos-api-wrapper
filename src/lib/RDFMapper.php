@@ -2,16 +2,16 @@
 
 use Symfony\Component\Yaml\Yaml;
 
-# use EayRDF_Namespace;
-# use EasyRDF_Graph;
-# use JSKOS\Object;
-
 /**
  * Maps RDF to JSKOS based on a YAML mapping file.
  */
 class RDFMapper 
 {
     private $rdfmapping;
+
+    public static $JSKOSClasses = [
+        'Concept', 'ConceptScheme', 'ConceptType', 'ConceptBundle', 'Concordance', 'Mapping'
+    ];
 
     /**
      * Silently load RDF from an URL.
@@ -30,7 +30,8 @@ class RDFMapper
     /**
      * Load mapping from YAML file and store it in a static class variable.
      */
-    public function __construct($file) {
+    public function __construct($file) 
+    {
         $map = Yaml::parse(file_get_contents($file));
         if (!$map) {
             throw new Exception("Failed to load YAML from $file");
@@ -50,26 +51,55 @@ class RDFMapper
     }
 
     /**
+     * Get a list of RDF object URIs.
+     */
+    public static function getURIs( EasyRDF_Resource $subject, $predicate, $pattern = null ) 
+    {
+        $uris = [];
+        foreach ( $subject->allResources($predicate) as $object ) {
+            if ( !$object->isBNode() ) {
+                $object = $object->getUri();
+                if ( !$pattern or preg_match($pattern, $object) ) {
+                    $uris[] = $object;
+                }
+            }
+        }
+        return $uris;
+    }
+
+    /**
      * Apply mapping via extraction of data from an RDF resource and add 
      * resulting data to a JSKOS Object.
      *
      * @param EasyRdf_Resource rdf
      * @param JSKOS\Object jskos
      */
-    public function rdf2jskos(EasyRdf_Resource $rdf, \JSKOS\Object $jskos, $defaultLang = 'en') {
+    public function rdf2jskos(EasyRdf_Resource $rdf, \JSKOS\Object $jskos, $defaultLang = 'en') 
+    {
+        # error_log($rdf->getGraph()->dump('text'));
         foreach ($this->rdfmapping as $property => $mapping)
         {
-            $type = $mapping['type'];
+            $type   = $mapping['type'];
+            if ( isset($mapping['jskos']) && in_array($mapping['jskos'], static::$JSKOSClasses) ) {
+                $class = '\JSKOS\\'.$mapping['jskos'];
+            }
 
-            foreach ( $mapping['properties'] as $rdfProperty ) {
-
-                if ($type == 'URI') 
+            foreach ( $mapping['properties'] as $rdfProperty ) 
+            {
+                if ($type == 'URI')
                 { 
-                    foreach ( $rdf->allResources($rdfProperty) as $resource ) {
+                    foreach ( static::getURIs($rdf, $rdfProperty) as $uri ) {
                         if (!isset($jskos->$property)) {
                             $jskos->$property = [];
                         }
-                        array_push( $jskos->$property, ['uri' => (string)$resource] );
+                        if (isset($class)) {
+                            $uri = new $class(['uri'=>$uri]);
+                        }
+                        if (isset($mapping['unique'])) {
+                            $jskos->$property = $uri;
+                        } else {
+                            array_push( $jskos->$property, $uri );
+                        }
                     }
 
                 } elseif ($type == 'literal')
@@ -91,14 +121,18 @@ class RDFMapper
                 } elseif ($type == 'plain') {
                     foreach ( $rdf->allLiterals($rdfProperty) as $literal ) {
                         $value = (string)$literal;
-                        if (!isset($jskos->$property)) {
-                            $jskos->$property = [];
+                        if (isset($mapping['unique'])) {
+                            $jskos->$property = $uri;
+                        } else {
+                            if (!isset($jskos->$property)) {
+                                $jskos->$property = [$value];
+                            } else {
+                                array_push( $jskos->$property, $value );
+                            }
                         }
-                        array_push( $jskos->$property, $value );
                     }
                 }
             }
         }
     }
-
 }

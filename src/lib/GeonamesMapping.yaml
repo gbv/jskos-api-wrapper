@@ -4,6 +4,7 @@ _ns:
 
 broader:
     type: URI
+    jskos: Concept
     properties:
         - gn:parentFeature
 prefLabel:
