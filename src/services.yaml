@@ -1,42 +1,59 @@
-GND:
-    about: Gemeinsame Normdatei
-    examples:
+---
+-
+    CLASS: GND
+    uri: http://bartoc.org/en/node/430
+    url: http://www.dnb.de/DE/Standardisierung/GND/gnd_node.html
+    prefLabel:
+        en: Gemeinsame Normdatei    
+    EXAMPLES:
       - uri: http://d-nb.info/gnd/4189143-0
       - notation: 118509624
-
-OpenSKOS:
-    about: Europeana OpenSKOS API
+-
+    CLASS: OpenSKOS
+    prefLabel:
+        en: Europeana OpenSKOS API
     url: http://skos.europeana.eu/api
-    examples:
+    EXAMPLES:
       - uri: http://data.europeana.eu/concept/loc
       - uri: http://id.loc.gov/authorities/subjects/sh2007003224
       - notation: 1500
-
-Wikidata:
+-
+    CLASS: Wikidata
+    uri: http://bartoc.org/en/node/1940
+    prefLabel:
+        en: Wikidata
     url: https://www.wikidata.org/
-    examples:
+    EXAMPLES:
       - notation: Q42
       - uri: http://www.wikidata.org/entity/Q36578
-
-Geonames:
+-
+    CLASS: Geonames
+    uri: http://bartoc.org/en/node/1674
+    prefLabel:
+        en: Geonames
     url: http://geonames.org/
-    examples:
+    EXAMPLES:
       - notation: 614540 
       - uri: http://sws.geonames.org/2918632/
-
-ORCID:
+-
+    CLASS: ORCID
+    uri: http://bartoc.org/en/node/2021
+    prefLabel:
+        en: ORCID
     url: http://orcid.org/
-    secret:
+    SECRET:
       - ORCID_CLIENT_ID
       - ORCID_CLIENT_SECRET
-    examples:
+    EXAMPLES:
       - notation: 0000-0002-7613-4123
       - uri: http://orcid.org/0000-0002-1825-0097
       - search: Carberry
-
-BARTOC:
+-
+    CLASS: BARTOC
+    prefLabel:
+        en: BARTOC
     url: http://bartoc.org/
-    examples:
+    EXAMPLES:
       - uri: http://bartoc.org/en/node/430
       - uri: http://bartoc.org/en/node/109
       - search: Library

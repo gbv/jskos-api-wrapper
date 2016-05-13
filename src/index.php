@@ -41,13 +41,20 @@
 include '../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
+use JSKOS\ConceptScheme;
+
 $services = Yaml::parse(file_get_contents('services.yaml'));
 
-foreach ($services as $name => $service) 
+foreach ($services as $service) 
 { 
+    $conceptScheme = new ConceptScheme($service);
+
+    $name = $service['CLASS'];
+    $queryExamples= $service['EXAMPLES'];
+
     $missingSecrets = [];
-    if (isset($service['secret'])) {
-        foreach ($service['secret'] as $secret) {
+    if (isset($service['SECRET'])) {
+        foreach ($service['SECRET'] as $secret) {
             if (!getenv($secret)) {
                 error_log("missing secret $secret");
                 $missingSecrets[] = $secret;
@@ -56,22 +63,29 @@ foreach ($services as $name => $service)
     }
 
     $source = "src/lib/${name}Service.php";
+
+    $prefLabel = $conceptScheme->prefLabel['en'];
+    echo "<h3>" . htmlspecialchars($prefLabel ? $prefLabel : $name) . "<small> &nbsp;\n";
+
+    if ( $conceptScheme->uri ) {
+        echo "<a href=\"".$conceptScheme->uri.'">';
+        echo "<span class=\"glyphicon glyphicon-info-sign\"></span></a> &nbsp;\n";
+        ?>
+        <a href="Service.php?uri=<?= $conceptScheme->uri ?>">
+        <span class="glyphicon glyphicon-option-horizontal"></span> 
+        </a> &nbsp;
+<?php
+    }
+    if ( $conceptScheme->url ) {
+        echo "<a href=\"".$conceptScheme->url.'">';
+        echo "<span class=\"glyphicon glyphicon-home\"></span></a> &nbsp;\n";
+    }
 ?>
-    <h3><?= $name ?><small>
-      &nbsp;
       <a href='https://github.com/gbv/jskos-php-examples/blob/master/<?= $source ?>'>
-       <i class="fa fa-github"></i> source</a>
+       <i class="fa fa-github"></i></a>
     </small>
-    </h2>
-<?php if ($service['about'] or $service['url']) { ?>
-    <p>
-        <span class="glyphicon glyphicon-arrow-right"></span>
-        <?php if ($service['url']) echo "<a href='".$service['url']."'>"; ?>
-        <?= htmlspecialchars($service['about'] ? $service['about'] : $service['url']); ?>
-        <?php if ($service['url']) echo "</a>"; ?>
-    </p> 
-<?php } 
-    $queryExamples= $service['examples'];
+    </h3>
+<?php
 
     if (count($missingSecrets)) {
         echo "<p><em>access requires secret environment config variables:</em> ";
