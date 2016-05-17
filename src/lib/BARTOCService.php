@@ -98,11 +98,13 @@ class BARTOCService extends Service {
         
         $names = [];
         foreach ($rdf->allLiterals('schema:name') as $name) {
-            $name = $name->getValue();
-            if (preg_match('/^[A-Z]{2,5}$/', $name)) {
-                $jskos->notation = [ $name ];
+            $value = $name->getValue();
+            if (preg_match('/^[A-Z]{2,5}$/', $value)) {
+                $jskos->notation = [ $value ];
+            } elseif( $name->getDatatypeUri() == "http://id.loc.gov/vocabulary/iso639-2/eng" ) {
+                $jskos->prefLabel['en'] = $value;
             } else {
-                $names[] = $name;
+                $names[] = $value;
             }
         }
 
