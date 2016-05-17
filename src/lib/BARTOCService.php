@@ -7,28 +7,39 @@
 include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
+use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\Page;
 use JSKOS\Error;
 
-# helper function
-function getUris( $subject, $predicate, $pattern = null ) {
-    $uris = [];
-    foreach ( $subject->allResources($predicate) as $object ) {
-        if ( !$object->isBNode() ) {
-            $object = $object->getUri();
-            if ( !$pattern or preg_match($pattern, $object) ) {
-                $uris[] = $object;
-            }
-        }
+use Symfony\Component\Yaml\Yaml;
+
+// TODO: move to another place
+function loadCSV( $file, $key=null ) {
+    $rows = array_map('str_getcsv', file($file));
+    $keys = array_shift($rows);
+    foreach( $rows as $row ) {
+        $row = array_combine($keys, $row);
+        $rows[$row[$key]] = $row;
     }
-    return $uris;
+    return $rows;
 }
 
 class BARTOCService extends Service {
     use IDTrait;
     
     protected $supportedParameters = ['notation','search'];
+
+    private $rdfMapper;
+    private $languages = [];
+    private $licenses  = [];
+    
+    public function __construct() {
+        $this->rdfMapper = new RDFMapper(__DIR__.'/BARTOCMapping.yaml');
+        $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
+        $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
+        parent::__construct();
+    }
 
     public function query($query) {
         $id = $this->idFromQuery($query, '/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', '/^[0-9]+$/');
@@ -45,35 +56,75 @@ class BARTOCService extends Service {
         $rdf = RDFMapper::loadRDF($uri);
         if (!$rdf) return;
 
-        $scheme = new ConceptScheme(['uri' => $uri]);
-
-        # TODO: use RDF mapping file from YAML instead
-
-        # url
-        foreach ( getUris($rdf, 'foaf:page') as $url ) {
-            if (substr($url,0,26) != 'http://bartoc.org/en/node/') {
-                $scheme->url = $url;
+        // FIXME: There is a bug in Drupal RDFa output. This is a dirty hack to repair.
+        foreach ( ['dct:subject', 'dct:type', 'dct:language', 'dct:format', 'schema:license'] 
+            as $predicate) {
+            foreach( $rdf->allResources($predicate) as $bnode ) {
+                if ($bnode->isBNode()) {
+                    foreach ($bnode->properties() as $p) {
+                        foreach ($bnode->allResources($p) as $o) {
+                            $rdf->add($predicate,$o);
+                        }
+                    }   
+                    # FIXME: bug in EasyRDF?!
+                    # $rdf->getGraph()->deleteResource($rdf->getUri(), $predicate, $bnode);
+                }
             }
         }
 
-        # Wikidata item
-        foreach ( getUris($rdf, 'dc:relation', '/^http:\/\/www\.wikidata\.org\/entity\/Q[0-9]+$/') as $uri ) {
-            $scheme->identifier = [ $uri ];
+        $jskos = new ConceptScheme(['uri' => $uri]);
+
+        $this->rdfMapper->rdf2jskos($rdf, $jskos, 'en'); 
+        # error_log($rdf->getGraph()->dump('text'));
+
+        # map licenses
+        foreach ( RDFMapper::getURIs($rdf, 'schema:license') as $license ) {
+            if (isset($this->licenses[$license])) {
+                $jskos->license[] = ['uri'=>$this->licenses[$license]['uri']];
+            } else {
+                $jskos->license[] = ['prefLabel'=>['en'=>'Unknown license']];
+                error_log("Unknown license: $license");
+            }
         }
 
-        # prefLabel and notation (FIXME: language is not always English)
+        # ISO 639-2 (primary) or ISO 639-2/T (Terminology, three letter)
+        foreach ( RDFMapper::getURIs($rdf, 'dc:language') as $language ) {
+            if (isset($this->languages[$language])) {
+                $jskos->languages[] = $this->languages[$language]['iana'];
+            } else {
+                error_log("Unknown language: $language");
+            }
+        }
+        
+        $names = [];
         foreach ($rdf->allLiterals('schema:name') as $name) {
             $name = $name->getValue();
             if (preg_match('/^[A-Z]{2,5}$/', $name)) {
-                $scheme->notation = [ $name ];
+                $jskos->notation = [ $name ];
             } else {
-                $scheme->prefLabel = [ 'en' => $name ];
+                $names[] = $name;
             }
         }
 
-        # FIXME: schema:about in RDFa output of BARTOC is malformed!
+        # TODO: prefLabel missing
+        # $prefLabels = [];
+        # foreach ($rdf->allLiterals('skos:prefLabel') as $name) {
+        #    $prefLabels[] = $name->getValue();
+        # }
+        # error_log(print_r($prefLabels,1));
 
-        return $scheme;
+        if (count($jskos->languages) == 1 && count($names) == 1) {
+            $jskos->prefLabel[ $jskos->languages[0] ] = $names[0];
+        } else {
+            error_log("Languages: ". implode(", ",$jskos->languages));
+            if (count($names) == 1) {
+                $jskos->prefLabel['und'] = $names[0];
+            } else {
+                $jskos->altLabel['und'] = $names;
+            }
+        }
+
+        return $jskos;
     }
 
     /**
