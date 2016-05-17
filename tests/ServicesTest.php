@@ -10,44 +10,34 @@ class ServicesTest extends PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         $services = Yaml::parse(file_get_contents('src/services.yaml'));
-        foreach ($services as $name => $about) {
-            include_once "src/lib/${name}Service.php";
-            $this->services[$name] = $about;
+        foreach ($services as $service) {
+            $class = $service['CLASS'].'Service';
+            include_once "src/lib/$class.php";            
+            $serviceInstance = new $class();
+            $this->assertInstanceOf($class, $serviceInstance, "created $class");
+            $service['INSTANCE'] = $serviceInstance;
+            $this->services[$class] = $service;
         } 
     }
 
-    public function testCreate() {
-        $serviceInstances = [];
-        foreach (array_keys($this->services) as $name) {
-            $class = $name."Service";
-            $service = new $class();
-            $this->assertInstanceOf($class, $service, "created $class");
-            $serviceInstances[$name] = $service;
-        } 
-        return $serviceInstances;
-    }
+    public function testExamples() {
+        foreach ($this->services as $service) {
 
-    /**
-     * @depends testCreate
-     */
-    public function testExamples($serviceInstances) {
-        foreach ($serviceInstances as $name => $service) {
-
-            $response = $service->query([]);
+            $response = $service['INSTANCE']->query([]);
             $this->assertTrue( 
                 is_null($response) or $response instanceof Page, 
-                "$name can be queried" 
+                $service['CLASS'] . ' name can be queried'
             );
 
-            if (isset($this->services[$name]['secret'])) {
-                continue;
-            }
+            if (isset($service['SECRET'])) continue;
 
-            if (isset($this->services[$name]['examples'])) {
-                foreach( $this->services[$name]['examples'] as $example ) {
-                    $response = $service->query($example);
+            if (isset($service['EXAMPLES'])) {
+                foreach($service['EXAMPLES'] as $example) {
+                    $response = $service['INSTANCE']->query($example);
                     $this->assertTrue($response instanceof Item or $response instanceof Page );
                 }
+            } else {
+                $response = $service['INSTANCE']->query([]);
             }
         }
     }

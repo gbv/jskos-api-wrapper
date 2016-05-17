@@ -3,6 +3,7 @@ _ns:
     x: http://example.org/
 broader:
     type: URI
+    jskos: Concept
     properties:
         - x:broader1
         - x:broader2

@@ -13,7 +13,7 @@ class RDFMapperTest extends PHPUnit_Framework_TestCase {
         $jskos = new Concept();
         $mapper->rdf2jskos($rdf->resource('http://example.org/c0'), $jskos);
 
-        # FIXME: result may differ because RDF has no intrinsic ordering
+        # FIXME: result may differ because RDF has no intrinsic order (?)
         $expect = new Concept([
             "prefLabel" => ["en" => "foo", "de" => "bar"],
             "altLabel" => ["en" => ["CONCEPT"], "de" => ["BEGRIFF","KONZEPT"] ],
@@ -25,7 +25,7 @@ class RDFMapperTest extends PHPUnit_Framework_TestCase {
             "relatedDate" => ["2009-01-01", "2010-01-01"],
         ]);
 
-        $this->assertEquals($expect, $jskos);
+        $this->assertEquals($expect->json(), $jskos->json());
     }
 }
 
