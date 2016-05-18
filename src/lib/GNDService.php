@@ -40,7 +40,7 @@ class GNDService extends Service {
     
         # error_log("$uri");
 
-        $rdf = RDFMapper::loadRDF("$uri/about/lds", $uri, "rdfxml");
+        $rdf = RDFMapper::loadRDF("$uri/about/lds", $uri);
         if (!$rdf) return;
 
         # error_log($rdf->getGraph()->serialise('turtle'));
