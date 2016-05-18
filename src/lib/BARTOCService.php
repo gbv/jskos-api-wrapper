@@ -108,12 +108,17 @@ class BARTOCService extends Service {
             }
         }
 
-        # TODO: prefLabel missing
-        # $prefLabels = [];
-        # foreach ($rdf->allLiterals('skos:prefLabel') as $name) {
-        #    $prefLabels[] = $name->getValue();
-        # }
-        # error_log(print_r($prefLabels,1));
+        $defaultLanguage = count($jskos->languages) == 1 ? $jskos->languages[0] : 'und';
+
+        $prefLabels = [];
+        foreach ($rdf->allLiterals('skos:prefLabel') as $name) {
+           $prefLabels[] = $name->getValue();
+        }
+        if (count($prefLabels) == 1) {
+            $jskos->prefLabel[$defaultLanguage] = $prefLabel[0];
+        } else {
+            $names = array_unique(array_merge($names,$prefLabels));
+        }
 
         if (count($jskos->languages) == 1 && count($names) == 1) {
             $jskos->prefLabel[ $jskos->languages[0] ] = $names[0];
