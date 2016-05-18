@@ -13,7 +13,6 @@ use JSKOS\Page;
 use JSKOS\Error;
 
 use Symfony\Component\Yaml\Yaml;
-
 // TODO: move to another place
 function loadCSV( $file, $key=null ) {
     $rows = array_map('str_getcsv', file($file));
@@ -27,6 +26,7 @@ function loadCSV( $file, $key=null ) {
 
 class BARTOCService extends Service {
     use IDTrait;
+    use LanguageDetectorTrait;
     
     protected $supportedParameters = ['notation','search'];
 
@@ -111,6 +111,8 @@ class BARTOCService extends Service {
         $defaultLanguage = count($jskos->languages) == 1 ? $jskos->languages[0] : 'und';
 
         $prefLabels = [];
+        # TODO: if multiple prefLabels, they could still be distinguished
+        # For instance http://localhost:8080/BARTOC.php?uri=http%3A%2F%2Fbartoc.org%2Fen%2Fnode%2F2008
         foreach ($rdf->allLiterals('skos:prefLabel') as $name) {
            $prefLabels[] = $name->getValue();
         }
@@ -129,6 +131,28 @@ class BARTOCService extends Service {
             } else {
                 $jskos->altLabel['und'] = $names;
             }
+        }
+
+        # try to detect language
+        if (isset($jskos->prefLabel['und'])) {
+            $guess = $this->detectLanguage( $jskos->prefLabel['und'], $jskos->languages );
+            if ($guess) {
+                $jskos->prefLabel[$guess] = $jskos->prefLabel['und'];
+                unset($jskos->prefLabel['und']);
+            }
+        }
+
+        if (isset($jskos->altLabel['und'])) {
+            $und = [];
+            foreach ( $jskos->altLabel['und'] as $text ) {
+                $guess = $this->detectLanguage( $text, $jskos->languages );
+                if ($guess) {
+                    $jskos->altLabell[$guess][] = $text;
+                } else {
+                    $und[] = $text;
+                }
+            }
+            $jskos->altLabel['und'] = $und;
         }
 
         return $jskos;
