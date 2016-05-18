@@ -147,7 +147,7 @@ class BARTOCService extends Service {
             foreach ( $jskos->altLabel['und'] as $text ) {
                 $guess = $this->detectLanguage( $text, $jskos->languages );
                 if ($guess) {
-                    $jskos->altLabell[$guess][] = $text;
+                    $jskos->altLabel[$guess][] = $text;
                 } else {
                     $und[] = $text;
                 }
