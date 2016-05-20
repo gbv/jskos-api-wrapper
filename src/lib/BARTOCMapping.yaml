@@ -4,6 +4,7 @@ _ns:
     schema: http://schema.org/
     dct:    http://purl.org/dc/terms/
     foaf:   http://xmlns.com/foaf/0.1/
+    nkos:   http://w3id.org/nkos#
 
 url:
     type: URI
@@ -24,3 +25,15 @@ subject:
     properties:
         - dct:subject
 
+created:
+    type: plain
+    unique: true
+    pattern: /^\d\d\d\d$/
+    properties:
+        - dct:created
+
+extent:
+    type: plain
+    unique: true
+    properties:
+        - nkos:sizeNote

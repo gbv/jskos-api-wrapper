@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "2d08d91425117dd081845e56f109a3ab",
-    "content-hash": "1a9e4d3aa455a7609fdbcd7d0e97298f",
     "packages": [
         {
             "name": "easyrdf/easyrdf",

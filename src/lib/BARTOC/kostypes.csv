@@ -1,0 +1,15 @@
+bartoc,nkos,label,definition
+http://bartoc.org/en/taxonomy/term/1,http://w3id.org/nkos/nkostype#thesaurus, thesaurus, "controlled and structured vocabulary in which concepts are represented by terms, organized so that relationships between concepts are made explicit, and preferred terms are accompanied by lead-in entries for synonyms or quasi-synonyms"
+http://bartoc.org/en/taxonomy/term/13693,http://w3id.org/nkos/nkostype#semantic_network, semantic network, "set of terms representing concepts, modeled as the nodes in a network of variable relationship types"
+http://bartoc.org/en/taxonomy/term/12506,http://w3id.org/nkos/nkostype#glossary, glossary, "a collection of textual glosses or of specialized terms with their meanings"
+http://bartoc.org/en/taxonomy/term/13689,http://w3id.org/nkos/nkostype#dictionary, dictionary, "a reference source containing words usually alphabetically arranged along with information about their forms, pronunciations, functions, etymologies, meanings, and syntactical and idiomatic uses"
+http://bartoc.org/en/taxonomy/term/13692,http://w3id.org/nkos/nkostype#name_authority_list, name authority list, "controlled vocabulary for use in naming particular entities consistently"
+http://bartoc.org/en/taxonomy/term/5,http://w3id.org/nkos/nkostype#taxonomy, taxonomy, "scheme of categories and subcategories that can be used to sort and otherwise organize items of knowledge or information"
+http://bartoc.org/en/taxonomy/term/13694,http://w3id.org/nkos/nkostype#subject_heading_scheme, subject heading scheme, "structured vocabulary comprising terms available for subject indexing, plus rules for combining them into pre-coordinated strings of terms where necessary"
+http://bartoc.org/en/taxonomy/term/13695,http://w3id.org/nkos/nkostype#synonym_ring, synonym ring, "set of synonymous or almost synonymous terms, any of which can be used to refer to a particular concept"
+http://bartoc.org/en/taxonomy/term/13690,http://w3id.org/nkos/nkostype#gazetteer, gazetteer, "geospatial dictionary of named and typed places"
+http://bartoc.org/en/taxonomy/term/2,http://w3id.org/nkos/nkostype#ontology, ontology, "A formal model that allows knowledge to be represented for a specific domain. An ontology describes the types of things that exist (classes), the relationships between them (properties) and the logical ways those classes and properties can be used together (axioms)"
+http://bartoc.org/en/taxonomy/term/3,http://w3id.org/nkos/nkostype#classification_schema, classification schema,
+http://bartoc.org/en/taxonomy/term/13969,http://w3id.org/nkos/nkostype#terminology, terminology, "set of designations belonging to one special language [ISO 1087-1:2000, definition 3.5.1]"
+http://bartoc.org/en/taxonomy/term/13688,http://w3id.org/nkos/nkostype#categorization_schema, categorization schema, "schedule of concepts and pre-coordinated combinations of concepts, arranged by classification"
+http://bartoc.org/en/taxonomy/term/13691,http://w3id.org/nkos/nkostype#list, list, "a limited set of terms arranged as a simple alphabetical list or in some other logically evident way; containing no relationships of any kind"

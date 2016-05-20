@@ -121,8 +121,11 @@ class RDFMapper
                 } elseif ($type == 'plain') {
                     foreach ( $rdf->allLiterals($rdfProperty) as $literal ) {
                         $value = (string)$literal;
+                        if (isset($mapping['pattern']) && !preg_match($mapping['pattern'], $value)) {
+                            continue;
+                        }
                         if (isset($mapping['unique'])) {
-                            $jskos->$property = $uri;
+                            $jskos->$property = $value;
                         } else {
                             if (!isset($jskos->$property)) {
                                 $jskos->$property = [$value];

@@ -13,6 +13,7 @@ use JSKOS\Page;
 use JSKOS\Error;
 
 use Symfony\Component\Yaml\Yaml;
+
 // TODO: move to another place
 function loadCSV( $file, $key=null ) {
     $rows = array_map('str_getcsv', file($file));
@@ -33,11 +34,13 @@ class BARTOCService extends Service {
     private $rdfMapper;
     private $languages = [];
     private $licenses  = [];
+    private $kostypes  = [];
     
     public function __construct() {
         $this->rdfMapper = new RDFMapper(__DIR__.'/BARTOCMapping.yaml');
         $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
         $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
+        $this->kostypes = loadCSV( __DIR__.'/BARTOC/kostypes.csv', 'bartoc' );
         parent::__construct();
     }
 
@@ -75,7 +78,7 @@ class BARTOCService extends Service {
         $jskos = new ConceptScheme(['uri' => $uri]);
 
         $this->rdfMapper->rdf2jskos($rdf, $jskos, 'en'); 
-        # error_log($rdf->getGraph()->dump('text'));
+#        error_log($rdf->getGraph()->dump('text'));
 
         # map licenses
         foreach ( RDFMapper::getURIs($rdf, 'schema:license') as $license ) {
@@ -87,6 +90,13 @@ class BARTOCService extends Service {
             }
         }
 
+        # map nkos type (TODO: provide as JSKOS)
+        foreach ( RDFMapper::getURIs($rdf, 'dc:type') as $type ) {
+            if (isset($this->kostypes[$type])) {
+                $jskos->type[] = $this->kostypes[$type]['nkos'];
+            }
+        }
+        
         # ISO 639-2 (primary) or ISO 639-2/T (Terminology, three letter)
         foreach ( RDFMapper::getURIs($rdf, 'dc:language') as $language ) {
             if (isset($this->languages[$language])) {
