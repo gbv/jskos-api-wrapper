@@ -82,6 +82,8 @@ class RDFMapper
             $type   = $mapping['type'];
             if ( isset($mapping['jskos']) && in_array($mapping['jskos'], static::$JSKOSClasses) ) {
                 $class = '\JSKOS\\'.$mapping['jskos'];
+            } else {
+                $class = null;
             }
 
             foreach ( $mapping['properties'] as $rdfProperty ) 
@@ -89,15 +91,15 @@ class RDFMapper
                 if ($type == 'URI')
                 { 
                     foreach ( static::getURIs($rdf, $rdfProperty) as $uri ) {
-                        if (!isset($jskos->$property)) {
-                            $jskos->$property = [];
-                        }
                         if (isset($class)) {
                             $uri = new $class(['uri'=>$uri]);
                         }
                         if (isset($mapping['unique'])) {
                             $jskos->$property = $uri;
                         } else {
+                            if (!isset($jskos->$property)) {
+                                $jskos->$property = [];
+                            }
                             array_push( $jskos->$property, $uri );
                         }
                     }

@@ -8,7 +8,6 @@ _ns:
 
 url:
     type: URI
-    jskos: plain
     unique: true
     properties:    
         - foaf:page
