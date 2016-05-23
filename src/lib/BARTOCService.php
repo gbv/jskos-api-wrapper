@@ -135,10 +135,10 @@ class BARTOCService extends Service {
         if (count($jskos->languages) == 1 && count($names) == 1) {
             $jskos->prefLabel[ $jskos->languages[0] ] = $names[0];
         } else {
-            error_log("Languages: ". implode(", ",$jskos->languages));
+            # error_log("Languages: ". implode(", ",$jskos->languages));
             if (count($names) == 1) {
                 $jskos->prefLabel['und'] = $names[0];
-            } else {
+            } elseif (count($names)) {
                 $jskos->altLabel['und'] = $names;
             }
         }
@@ -162,7 +162,11 @@ class BARTOCService extends Service {
                     $und[] = $text;
                 }
             }
-            $jskos->altLabel['und'] = $und;
+            if (count($und)) {
+                $jskos->altLabel['und'] = $und;
+            } else {
+                unset($jskos->altLabel['und']);
+            }
         }
 
         return $jskos;
