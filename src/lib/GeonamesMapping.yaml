@@ -7,20 +7,30 @@ broader:
     jskos: Concept
     properties:
         - gn:parentFeature
+        - gn:parentADM1
+
 prefLabel:
     type: literal
     unique: true
     properties:
         - gn:officialName
+          
 altLabel:
     type: literal
     properties:
         - gn:alternateName
+
 notation:
     type: plain
     properties:
         - gn:countryCode
  
+subject:
+    type: URI
+    jskos: Concept
+    properties:
+        - gn:wikipediaArticle
+
 # TODO: lat/ling should better be a list of positions
 #latitude:
 #    type: literal
