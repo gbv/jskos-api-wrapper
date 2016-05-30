@@ -31,6 +31,12 @@ created:
     properties:
         - dct:created
 
+creator:
+    type: URI
+    jskos: Concept
+    properties:
+        - foaf:maker
+
 extent:
     type: plain
     unique: true
