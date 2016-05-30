@@ -70,3 +70,19 @@
     EXAMPLES:
       - uri: http://viaf.org/viaf/87772061
       - search: austen
+-
+    CLASS: Iconclass
+    uri: bartoc.org/en/node/459
+    url: http://www.iconclass.nl/
+    identifier:
+        - http://iconclass.org/rdf/2011/09/
+    prefLabel:
+        en: Iconclass
+    license:
+        - uri: http://opendatacommons.org/licenses/odbl/1.0/
+        - uri: http://opendatacommons.org/licenses/dbcl/1.0/
+    EXAMPLES:
+        - notation: 52D1
+        - notation: 25F23(+46) 
+        - uri: http://iconclass.org/25F23(LION)(%2B46)
+

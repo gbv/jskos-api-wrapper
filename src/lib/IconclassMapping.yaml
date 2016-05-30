@@ -1,0 +1,33 @@
+_ns:
+    skos: http://www.w3.org/2004/02/skos/core#
+    dc: http://purl.org/dc/elements/1.1/
+
+broader:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:broader
+
+narrower:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:narrower
+
+inScheme:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:inScheme
+
+prefLabel:
+    type: literal
+    properties:
+        - skos:prefLabel
+
+# could also be JSKOS subject (?)
+hiddenLabel:
+    type: literal
+    properties:
+        - dc:subject
+
