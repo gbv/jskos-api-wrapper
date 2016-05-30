@@ -1,0 +1,31 @@
+---
+_ns:
+    dct: http://purl.org/dc/terms/
+    schema: http://schema.org/
+    rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+
+# JSKOS object fields
+
+type:
+    type: URI
+    properties:
+        - rdf:type
+
+# JSKOS Item fields
+
+identifier:
+    type: URI
+    properties:
+        - schema:sameAs
+
+notation:
+    type: plain
+    properties:
+        - dct:identifier
+
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - schema:name
+
