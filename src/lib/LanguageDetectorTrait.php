@@ -11,6 +11,7 @@ trait LanguageDetectorTrait
     # TODO: put into util class
     public function detectLanguage($text, $languages) 
     {
+        if (!count($languages)) return;
         if (count($languages) > 10) return; # too many languages, probably no good result?
 
         if (!static::$languageDetector) {

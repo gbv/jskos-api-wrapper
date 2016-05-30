@@ -48,7 +48,6 @@ class VIAFService extends Service {
     private function search($search) {
         $url = 'http://www.viaf.org/viaf/AutoSuggest?' . http_build_query(['query'=>$search]);
         try {
-            error_log($url);
             $json = @json_decode( @file_get_contents($url) );
             # query = $json['query']
             foreach ( $json->result as $hit ) {
