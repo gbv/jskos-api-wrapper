@@ -8,19 +8,20 @@ include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
+use JSKOS\RDFMapping;
 
 class IconclassService extends Service {
     use IDTrait;
     
     protected $supportedParameters = ['notation'];
 
-    private $rdfMapper;
+    private $rdfMapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapper = new RDFMapper(__DIR__.'/IconclassMapping.yaml');
+        $this->rdfMapping = new RDFMapping(__DIR__.'/IconclassMapping.yaml');
         parent::__construct();
     }
 
@@ -43,11 +44,11 @@ class IconclassService extends Service {
 
         $uri = "http://iconclass.org/".rawurlencode($notation);
 
-        $rdf = RDFMapper::loadRDF("$uri.rdf", $uri, "rdfxml");
+        $rdf = RDFMapping::loadRDF("$uri.rdf", $uri, "rdfxml");
         if (!$rdf or $rdf->getGraph()->countTriples() < 3) return;
 
         $jskos = new Concept([ 'uri' => $uri, 'notation' => [$notation] ]);
-        $this->rdfMapper->rdf2jskos($rdf, $jskos); 
+        $this->rdfMapping->apply($rdf, $jskos); 
 
         return $jskos;
     }

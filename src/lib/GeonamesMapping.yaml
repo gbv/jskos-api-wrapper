@@ -2,6 +2,8 @@
 _ns:
     gn: http://www.geonames.org/ontology#
 
+_uriSpace: http://sws.geonames.org/
+
 broader:
     type: URI
     jskos: Concept

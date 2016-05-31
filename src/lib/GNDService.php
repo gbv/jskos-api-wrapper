@@ -12,50 +12,37 @@ use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
+use JSKOS\RDFMapping;
 
 class GNDService extends Service {
     use IDTrait;
     
     protected $supportedParameters = ['notation'];
 
-    private $rdfMapper;
+    private $rdfMapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapper = new RDFMapper(__DIR__.'/GNDMapping.yaml');
+        $this->rdfMapping = new RDFMapping(__DIR__.'/GNDMapping.yaml');
         parent::__construct();
     }
 
     public function query($query) {
         
-        $id = $this->idFromQuery($query, '/^http:\/\/d-nb\.info\/gnd\/([0-9X-]+)$/', '/^[0-9X-]+$/');
+        $notation = $this->idFromQuery($query, '/^http:\/\/d-nb\.info\/gnd\/([0-9X-]+)$/', '/^[0-9X-]+$/');
+        if (!isset($notation)) return;
+        
+        $uri = "http://d-nb.info/gnd/$notation";
+        $jskos = new Concept(['uri'=>$uri, 'notation' => [$notation]]);
 
-        if (isset($id)) {
-            $uri = "http://d-nb.info/gnd/$id";
-        } else {
-            return;
-        }
-    
-        # error_log("$uri");
-
-        $rdf = RDFMapper::loadRDF("$uri/about/lds", $uri);
+        $rdf = RDFMapping::loadRDF("$uri/about/lds", $uri);
         if (!$rdf) return;
 
         # error_log($rdf->getGraph()->serialise('turtle'));
 
-        $jskos = new Concept(['uri'=>$uri, 'notation' => [$id]]);
-
-        foreach ( $rdf->allResources('owl:sameAs') as $id ) {
-            $jskos->identifier[] = "$id";
-        }
- 
-        foreach ( $rdf->typesAsResources() as $type ) {
-            $jskos->type[] = (string)$type;
-        }
-
-        $this->rdfMapper->rdf2jskos($rdf, $jskos, 'de'); 
+        $this->rdfMapping->apply($rdf, $jskos); 
 
         return $jskos;
     }

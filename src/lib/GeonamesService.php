@@ -10,19 +10,20 @@ use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
+use JSKOS\RDFMapping;
 
 class GeonamesService extends Service {
     use IDTrait;
 
     protected $supportedParameters = ['notation'];
 
-    private $rdfMapper;
+    private $rdfMapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapper = new RDFMapper(__DIR__.'/GeonamesMapping.yaml');
+        $this->rdfMapping = new RDFMapping(__DIR__.'/GeonamesMapping.yaml');
         parent::__construct();
     }
 
@@ -32,22 +33,18 @@ class GeonamesService extends Service {
     public function query($query) {
 
         $id = $this->idFromQuery($query, '/^http:\/\/sws\.geonames\.org\/([0-9]+)\/$/', '/^[0-9]+$/');
-        $jskos = null;
+        if (!isset($id)) return;
+        $uri = $this->rdfMapping->buildUri($id);
 
-        // get concept by notation and/or uri
-        if (isset($id)) {
-            $uri = "http://sws.geonames.org/$id/";
+        $rdf = RDFMapping::loadRDF($uri);
+        if (!$rdf) return;
 
-            $rdf = RDFMapper::loadRDF($uri);
-            if (!$rdf) return;
+        $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
 
-            $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
-
-            // TODO: get childrenFeatures if requested
-            // TODO: modified, created, license
-        
-            $this->rdfMapper->rdf2jskos($rdf, $jskos); 
-        }
+        // TODO: get childrenFeatures if requested
+        // TODO: modified, created, license
+    
+        $this->rdfMapping->apply($rdf, $jskos); 
  
         return $jskos;
     }

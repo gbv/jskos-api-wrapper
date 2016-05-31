@@ -11,7 +11,7 @@ See **IDTrait**.
 
 To facilitate writing wrappers from RDF to JSKOS, a mapping can be written in
 form of a YAML file (see `*Mapping.yml` files in directory `src/lib`). The Mapping
-is implemented with class **RDFMapper**.
+is implemented with class **JSKOS\RDFMapping**.
 
 ### Passing queries to a Lucene backend
 

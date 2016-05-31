@@ -1,9 +1,18 @@
 ---
 _ns:
-    gnd: http://d-nb.info/standards/elementset/gnd#
     foaf: http://xmlns.com/foaf/0.1/
+    gnd: http://d-nb.info/standards/elementset/gnd#
+    owl: http://www.w3.org/2002/07/owl#
+    rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+
+_language: de
 
 # JSKOS object fields
+
+type:
+    type: URI
+    properties:
+        - rdf:type
 
 created:
     type: plain
@@ -63,6 +72,11 @@ publisher:
         - gnd:editor
 
 # JSKOS Item fields
+
+identifier:
+    type: URI
+    properties:
+        - owl:sameAs
 
 url:
     type: URI

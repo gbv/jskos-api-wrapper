@@ -6,6 +6,10 @@ _ns:
     foaf:   http://xmlns.com/foaf/0.1/
     nkos:   http://w3id.org/nkos#
 
+_uriSpace: http://bartoc.org/en/node/
+
+# JSKOS Item fields
+
 url:
     type: URI
     unique: true

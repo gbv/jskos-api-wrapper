@@ -11,7 +11,7 @@ use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\Page;
 use JSKOS\Error;
-
+use JSKOS\RDFMapping;
 use Symfony\Component\Yaml\Yaml;
 
 // TODO: move to another place
@@ -31,13 +31,13 @@ class BARTOCService extends Service {
     
     protected $supportedParameters = ['notation','search'];
 
-    private $rdfMapper;
+    private $rdfMapping;
     private $languages = [];
     private $licenses  = [];
     private $kostypes  = [];
     
     public function __construct() {
-        $this->rdfMapper = new RDFMapper(__DIR__.'/BARTOCMapping.yaml');
+        $this->rdfMapping = new RDFMapping(__DIR__.'/BARTOCMapping.yaml');
         $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
         $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
         $this->kostypes = loadCSV( __DIR__.'/BARTOC/kostypes.csv', 'bartoc' );
@@ -45,9 +45,10 @@ class BARTOCService extends Service {
     }
 
     public function query($query) {
-        $id = $this->idFromQuery($query, '/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', '/^[0-9]+$/');
-        if (isset($id)) {
-            return $this->lookupByURI("http://bartoc.org/en/node/$id");
+        # TODO: Let IDTrait return concept with URI and notation
+        $notation = $this->idFromQuery($query, '/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', '/^[0-9]+$/');
+        if (isset($notation)) {
+            return $this->lookupByURI( $this->rdfMapping->buildUri($notation) );
         } elseif (isset($query['search'])) {
             return new Page( $this->search($query['search']) );
         } else {
@@ -56,7 +57,7 @@ class BARTOCService extends Service {
     }
 
     public function lookupByURI($uri) {
-        $rdf = RDFMapper::loadRDF($uri);
+        $rdf = RDFMapping::loadRDF($uri);
         if (!$rdf) return;
 
         // FIXME: There is a bug in Drupal RDFa output. This is a dirty hack to repair.
@@ -77,11 +78,11 @@ class BARTOCService extends Service {
 
         $jskos = new ConceptScheme(['uri' => $uri]);
 
-        $this->rdfMapper->rdf2jskos($rdf, $jskos, 'en'); 
+        $this->rdfMapping->apply($rdf, $jskos); 
 #        error_log($rdf->getGraph()->dump('text'));
 
         # map licenses
-        foreach ( RDFMapper::getURIs($rdf, 'schema:license') as $license ) {
+        foreach ( RDFMapping::getURIs($rdf, 'schema:license') as $license ) {
             if (isset($this->licenses[$license])) {
                 $jskos->license[] = ['uri'=>$this->licenses[$license]['uri']];
             } else {
@@ -91,14 +92,14 @@ class BARTOCService extends Service {
         }
 
         # map nkos type (TODO: provide as JSKOS)
-        foreach ( RDFMapper::getURIs($rdf, 'dc:type') as $type ) {
+        foreach ( RDFMapping::getURIs($rdf, 'dc:type') as $type ) {
             if (isset($this->kostypes[$type])) {
                 $jskos->type[] = $this->kostypes[$type]['nkos'];
             }
         }
         
         # ISO 639-2 (primary) or ISO 639-2/T (Terminology, three letter)
-        foreach ( RDFMapper::getURIs($rdf, 'dc:language') as $language ) {
+        foreach ( RDFMapping::getURIs($rdf, 'dc:language') as $language ) {
             if (isset($this->languages[$language])) {
                 $jskos->languages[] = $this->languages[$language]['iana'];
             } else {

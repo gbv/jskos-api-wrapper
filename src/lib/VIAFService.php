@@ -9,38 +9,39 @@ include_once __DIR__.'/../../vendor/autoload.php';
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
+use JSKOS\RDFMapping;
 
 class VIAFService extends Service {
     use IDTrait;
     
     protected $supportedParameters = ['notation','search'];
 
-    private $rdfMapper;
+    private $rdfMapping;
 
     /**
      * Initialize Mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapper = new RDFMapper(__DIR__.'/VIAFMapping.yaml');
+        $this->rdfMapping = new RDFMapping(__DIR__.'/VIAFMapping.yaml');
         parent::__construct();
     }
 
     public function query($query) {
-        $id = $this->idFromQuery($query, '/^http:\/\/viaf\.org\/viaf\/([0-9]+)$/', '/^[0-9]+$/');
-        if (isset($id)) {
-            return $this->lookup("http://viaf.org/viaf/$id");
+        $notation = $this->idFromQuery($query, '/^http:\/\/viaf\.org\/viaf\/([0-9]+)$/', '/^[0-9]+$/');
+        if (isset($notation)) {
+            return $this->lookup( $this->rdfMapping->buildUri($notation) );
         } elseif (isset($query['search'])) {
             return new Page( $this->search($query['search']) );
         }
     }
 
     public function lookup($uri) {
-        $rdf = RDFMapper::loadRDF($uri);
+        $rdf = RDFMapping::loadRDF($uri);
         if (!$rdf) return;
         # error_log($rdf->getGraph()->serialise('turtle'));
 
         $jskos = new Concept([ 'uri' => $uri ]);
-        $this->rdfMapper->rdf2jskos($rdf, $jskos); 
+        $this->rdfMapping->apply($rdf, $jskos); 
 
         return $jskos;
     }

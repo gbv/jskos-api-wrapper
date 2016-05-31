@@ -1,17 +1,18 @@
 <?php
 
 use JSKOS\Concept;
+use JSKOS\RDFMapping;
 
-class RDFMapperTest extends PHPUnit_Framework_TestCase {
+class RDFMappingTest extends PHPUnit_Framework_TestCase {
 
     public function testMapper() {
-        $mapper = new RDFMapper(__DIR__.'/sampleMapping.yaml');
+        $mapper = new RDFMapping(__DIR__.'/sampleMapping.yaml');
 
         $rdf = new EasyRdf_Graph();
         $rdf->parseFile(__DIR__.'/sampleRDF.ttl', 'turtle');
 
         $jskos = new Concept();
-        $mapper->rdf2jskos($rdf->resource('http://example.org/c0'), $jskos);
+        $mapper->apply($rdf->resource('http://example.org/c0'), $jskos);
 
         # FIXME: result may differ because RDF has no intrinsic order (?)
         $expect = new Concept([
