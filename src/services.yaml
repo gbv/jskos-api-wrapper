@@ -24,7 +24,7 @@
         en: Wikidata
     url: https://www.wikidata.org/
     EXAMPLES:
-      - notation: Q42
+      - notation: q42
       - uri: http://www.wikidata.org/entity/Q36578
 -
     CLASS: Geonames

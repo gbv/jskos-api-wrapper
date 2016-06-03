@@ -1,0 +1,4 @@
+_uriSpace:
+    Concept:
+        uriSpace: http:///orcid.org/
+        notationPattern: /^(\d\d\d\d-){3}\d\d\d[0-9X]$/

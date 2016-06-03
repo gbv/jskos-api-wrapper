@@ -2,14 +2,11 @@
 
 namespace JSKOS;
 
-use Symfony\Component\Yaml\Yaml;
-
 /**
  * RDFMapping maps RDF data to JSKOS based on a set of mapping rules.
- * Mapping rules are provided in form of a YAML file.
  *
  * The rules define which RDF properties will be used to fill which JSKOS 
- * fields (and the special keys _ns and _language).
+ * fields (and the special keys _ns and _defaultLanguage).
  *
  * RDF data must be provided as EasyRdf_Resource (ARC2 may be added later).
  *
@@ -26,12 +23,7 @@ class RDFMapping
     /**
      * Default language for literals without language tag.
      */
-    protected $language = 'und';
-
-    /**
-     * Expected URI space.
-     */
-    protected $uriSpace;
+    protected $defaultLanguage;
 
     /**
      * Allowed JSKOS class names
@@ -46,37 +38,28 @@ class RDFMapping
     ];
 
     /**
-     * Load mapping rules from YAML file and store it in a static class variable.
+     * Create a new mapping based on rules.
      */
-    public function __construct($rules)
+    public function __construct(array $rules)
     {
-        if (is_string($rules)) {
-            $file = $rules;
-            $rules = Yaml::parse(file_get_contents($file));
-            if (!$rules) {
-                throw new Exception("Failed to load YAML from $file");
-            }
-        }
-
-        if ($rules['_ns']) {
+        if (isset($rules['_ns'])) {
             foreach ($rules['_ns'] as $prefix => $namespace) {
                 # TODO: warn if prefix is already defined with different namespace!
                 \EasyRdf_Namespace::set($prefix, $namespace);
             }
-            unset($rules['_ns']);
         }
 
-        if (isset($rules['_language'])) {
-            $this->language = $rules['_language'];
-            unset($rules['_language']);
+        if (isset($rules['_defaultLanguage'])) {
+            $this->defaultLanguage = $rules['_defaultLanguage'];
+        } else {
+            $this->defaultLanguage = 'und';
         }
 
-        if (isset($rules['_uriSpace'])) {
-            $this->uriSpace = $rules['_uriSpace'];
-            unset($rules['_uriSpace']);
+        foreach ($rules as $field => $config) {
+            if (substr($field,0,1) != '_') {
+                $this->rules[$field] = $config;
+            }
         }
-
-        $this->rules = $rules;
     }
 
     /**
@@ -115,7 +98,8 @@ class RDFMapping
                 } elseif ($type == 'literal') {
                     foreach ($rdf->allLiterals($rdfProperty) as $literal) {
                         $value = (string)$literal;
-                        $language = $literal->getLang() ? $literal->getLang() : $this->language;
+                        $language = $literal->getLang() 
+                                  ? $literal->getLang() : $this->defaultLanguage;
 
                         $languageMap = isset($jskos->$property) ? $jskos->$property : [];
 
@@ -149,16 +133,6 @@ class RDFMapping
     }
 
     /**
-     * Build a local URI from uriSpace and notation.
-     */
-    public function buildUri($notation) 
-    {
-        if ($this->uriSpace) {
-            return $this->uriSpace . $notation;
-        }
-    }
-
-    /**
      * Silently load RDF from an URL.
      * @return EasyRdf_Resource|null
      */
@@ -168,6 +142,7 @@ class RDFMapping
             $rdf = \EasyRdf_Graph::newAndLoad($url, $format);
             return $rdf->resource($uri ? $uri : $url);
         } catch (Exception $e) {
+            // TODO: this does not catch fatal EasyRdf_Exception?!
             return;
         }
     }

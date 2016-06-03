@@ -12,6 +12,7 @@ use JSKOS\ConceptScheme;
 use JSKOS\Page;
 use JSKOS\Error;
 use JSKOS\RDFMapping;
+use JSKOS\URISpaceService;
 use Symfony\Component\Yaml\Yaml;
 
 // TODO: move to another place
@@ -26,18 +27,25 @@ function loadCSV( $file, $key=null ) {
 }
 
 class BARTOCService extends Service {
-    use IDTrait;
     use LanguageDetectorTrait;
     
     protected $supportedParameters = ['notation','search'];
 
+    private $config;
+    private $uriSpaceService;
     private $rdfMapping;
     private $languages = [];
     private $licenses  = [];
     private $kostypes  = [];
-    
+ 
+    /**
+     * Initialize configuration and mapping from YAML file.
+     */
     public function __construct() {
-        $this->rdfMapping = new RDFMapping(__DIR__.'/BARTOCMapping.yaml');
+        $file = __DIR__.'/BARTOCService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->rdfMapping = new RDFMapping($this->config);
         $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
         $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
         $this->kostypes = loadCSV( __DIR__.'/BARTOC/kostypes.csv', 'bartoc' );
@@ -45,10 +53,9 @@ class BARTOCService extends Service {
     }
 
     public function query($query) {
-        # TODO: Let IDTrait return concept with URI and notation
-        $notation = $this->idFromQuery($query, '/^http:\/\/bartoc\.org\/en\/node\/([0-9]+)$/', '/^[0-9]+$/');
-        if (isset($notation)) {
-            return $this->lookupByURI( $this->rdfMapping->buildUri($notation) );
+        $jskos = $this->uriSpaceService->query($query);
+        if ($jskos) {
+            return $this->entityLookup($jskos->uri);
         } elseif (isset($query['search'])) {
             return new Page( $this->search($query['search']) );
         } else {
@@ -56,7 +63,7 @@ class BARTOCService extends Service {
         }
     }
 
-    public function lookupByURI($uri) {
+    public function entityLookup($uri) {
         $rdf = RDFMapping::loadRDF($uri);
         if (!$rdf) return;
 

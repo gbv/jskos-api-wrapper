@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "313944dca176de1fa1630f3ff2851013",
-    "content-hash": "9f2a8da230dd72c02509b00daf01fa99",
+    "hash": "90a6e70dd71af6557df402fab960c3ac",
+    "content-hash": "a34d2f333eee98a7aadcf087b9da56dc",
     "packages": [
         {
             "name": "easyrdf/easyrdf",
@@ -71,16 +71,16 @@
         },
         {
             "name": "gbv/jskos",
-            "version": "0.0.9",
+            "version": "0.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gbv/jskos-php.git",
-                "reference": "47061d62a2e3cc89171fb9b08e59aaf3add8b089"
+                "reference": "2eea65a4f20d850fc3996752845b7e4ea8ac3287"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gbv/jskos-php/zipball/47061d62a2e3cc89171fb9b08e59aaf3add8b089",
-                "reference": "47061d62a2e3cc89171fb9b08e59aaf3add8b089",
+                "url": "https://api.github.com/repos/gbv/jskos-php/zipball/2eea65a4f20d850fc3996752845b7e4ea8ac3287",
+                "reference": "2eea65a4f20d850fc3996752845b7e4ea8ac3287",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
             "keywords": [
                 "SKOS"
             ],
-            "time": "2016-05-04 09:26:03"
+            "time": "2016-06-02 19:48:48"
         },
         {
             "name": "mashape/unirest-php",

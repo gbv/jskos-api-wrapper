@@ -4,7 +4,10 @@ _ns:
     schema: http://schema.org/
     rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
 
-_uriSpace: http://viaf.org/viaf/
+_uriSpace:
+    Concept:
+        uriSpace: http://viaf.org/viaf/
+        notationPattern: /^[0-9]+$/
 
 # JSKOS object fields
 

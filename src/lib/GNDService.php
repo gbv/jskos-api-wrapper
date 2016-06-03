@@ -13,31 +13,37 @@ use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
 use JSKOS\RDFMapping;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
-class GNDService extends Service {
-    use IDTrait;
+class GNDService extends Service
+{
     
     protected $supportedParameters = ['notation'];
 
+    private $config;
+    private $uriSpaceService;
     private $rdfMapping;
 
     /**
-     * Initialize Mapping from YAML file.
+     * Initialize configuration and mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapping = new RDFMapping(__DIR__.'/GNDMapping.yaml');
+        $file = __DIR__.'/GNDService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->rdfMapping = new RDFMapping($this->config);
         parent::__construct();
     }
 
+    /**
+     * Perform entity lookup query.
+     */
     public function query($query) {
-        
-        $notation = $this->idFromQuery($query, '/^http:\/\/d-nb\.info\/gnd\/([0-9X-]+)$/', '/^[0-9X-]+$/');
-        if (!isset($notation)) return;
-        
-        $uri = "http://d-nb.info/gnd/$notation";
-        $jskos = new Concept(['uri'=>$uri, 'notation' => [$notation]]);
+        $jskos = $this->uriSpaceService->query($query);
+        if (!$jskos) return;
 
-        $rdf = RDFMapping::loadRDF("$uri/about/lds", $uri);
+        $rdf = RDFMapping::loadRDF($jskos->uri ."/about/lds", $jskos->uri);
         if (!$rdf) return;
 
         # error_log($rdf->getGraph()->serialise('turtle'));

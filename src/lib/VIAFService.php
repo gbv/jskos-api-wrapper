@@ -10,34 +10,41 @@ use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\RDFMapping;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
 class VIAFService extends Service {
-    use IDTrait;
     
     protected $supportedParameters = ['notation','search'];
 
+    private $config;
+    private $uriSpaceService;
     private $rdfMapping;
 
     /**
-     * Initialize Mapping from YAML file.
+     * Initialize configuration and mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapping = new RDFMapping(__DIR__.'/VIAFMapping.yaml');
+        $file = __DIR__.'/VIAFService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->rdfMapping = new RDFMapping($this->config);
         parent::__construct();
     }
 
     public function query($query) {
-        $notation = $this->idFromQuery($query, '/^http:\/\/viaf\.org\/viaf\/([0-9]+)$/', '/^[0-9]+$/');
-        if (isset($notation)) {
-            return $this->lookup( $this->rdfMapping->buildUri($notation) );
+        $jskos = $this->uriSpaceService->query($query);
+        if ($jskos and $jskos->uri) {
+            return $this->lookupEntity($jskos->uri);
         } elseif (isset($query['search'])) {
             return new Page( $this->search($query['search']) );
         }
     }
 
-    public function lookup($uri) {
+    public function lookupEntity($uri) {
         $rdf = RDFMapping::loadRDF($uri);
         if (!$rdf) return;
+
         # error_log($rdf->getGraph()->serialise('turtle'));
 
         $jskos = new Concept([ 'uri' => $uri ]);

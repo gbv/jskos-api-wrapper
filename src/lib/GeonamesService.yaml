@@ -2,7 +2,10 @@
 _ns:
     gn: http://www.geonames.org/ontology#
 
-_uriSpace: http://sws.geonames.org/
+_uriSpace:
+    Concept:
+        uriSpace: http://sws.geonames.org/
+        notationPattern: /^[0-9]+\/?$/
 
 broader:
     type: URI
@@ -33,7 +36,7 @@ subject:
     properties:
         - gn:wikipediaArticle
 
-# TODO: lat/ling should better be a list of positions
+# TODO: lat/long should better be a list of positions
 #latitude:
 #    type: literal
 #    properties: wgs84_pos:lat ]

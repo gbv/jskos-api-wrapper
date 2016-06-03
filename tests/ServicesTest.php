@@ -21,12 +21,13 @@ class ServicesTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testExamples() {
-        foreach ($this->services as $service) {
+        foreach ($this->services as $class => $service) {
+            echo "testing $class\n";
 
             $response = $service['INSTANCE']->query([]);
             $this->assertTrue( 
                 is_null($response) or $response instanceof Page, 
-                $service['CLASS'] . ' name can be queried'
+                "$class name can be queried"
             );
 
             if (isset($service['SECRET'])) continue;

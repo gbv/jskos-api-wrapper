@@ -11,19 +11,25 @@ use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
 use JSKOS\RDFMapping;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
 class GeonamesService extends Service {
-    use IDTrait;
 
     protected $supportedParameters = ['notation'];
 
+    private $config;
+    private $uriSpaceService;
     private $rdfMapping;
 
     /**
-     * Initialize Mapping from YAML file.
+     * Initialize configuration and mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapping = new RDFMapping(__DIR__.'/GeonamesMapping.yaml');
+        $file = __DIR__.'/GeonamesService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->rdfMapping = new RDFMapping($this->config);
         parent::__construct();
     }
 
@@ -31,15 +37,15 @@ class GeonamesService extends Service {
      * Perform query.
      */ 
     public function query($query) {
+        $jskos = $this->uriSpaceService->query($query);
+        if (!$jskos) return;
 
-        $id = $this->idFromQuery($query, '/^http:\/\/sws\.geonames\.org\/([0-9]+)\/$/', '/^[0-9]+$/');
-        if (!isset($id)) return;
-        $uri = $this->rdfMapping->buildUri($id);
+        if (substr($jskos->uri,-1) != '/') {
+            $jskos->uri = $jskos->uri . '/';
+        }
 
-        $rdf = RDFMapping::loadRDF($uri);
+        $rdf = RDFMapping::loadRDF($jskos->uri);
         if (!$rdf) return;
-
-        $jskos = new Concept([ 'uri' => $uri, 'notation' => [ $id ]]);
 
         // TODO: get childrenFeatures if requested
         // TODO: modified, created, license

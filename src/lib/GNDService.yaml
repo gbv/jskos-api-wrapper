@@ -5,7 +5,12 @@ _ns:
     owl: http://www.w3.org/2002/07/owl#
     rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
 
-_language: de
+_defaultLanguage: de
+
+_uriSpace:
+    Concept:
+        uriSpace: http://d-nb.info/gnd/
+        notationPattern: /^[0-9X-]+$/
 
 # JSKOS object fields
 

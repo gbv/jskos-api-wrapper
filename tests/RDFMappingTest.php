@@ -2,11 +2,13 @@
 
 use JSKOS\Concept;
 use JSKOS\RDFMapping;
+use Symfony\Component\Yaml\Yaml;
 
 class RDFMappingTest extends PHPUnit_Framework_TestCase {
 
     public function testMapper() {
-        $mapper = new RDFMapping(__DIR__.'/sampleMapping.yaml');
+        $config = Yaml::parse(file_get_contents(__DIR__.'/sampleMapping.yaml'));
+        $mapper = new RDFMapping($config);
 
         $rdf = new EasyRdf_Graph();
         $rdf->parseFile(__DIR__.'/sampleRDF.ttl', 'turtle');

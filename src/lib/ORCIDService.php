@@ -10,17 +10,23 @@ use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
 class ORCIDService extends Service {
-    use IDTrait;
     use LuceneTrait;
 
     protected $supportedParameters = ['notation','search'];
 
+    private $config;
+    private $uriSpaceService;
     private $client_id;
     private $client_secret;
 
     public function __construct() {
+        $file = __DIR__.'/ORCIDService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
         $this->client_id     = getenv('ORCID_CLIENT_ID');
         $this->client_secret = getenv('ORCID_CLIENT_SECRET');
         parent::__construct();
@@ -134,11 +140,8 @@ class ORCIDService extends Service {
      * Perform query.
      */ 
     public function query($query) {
-
-        $id = $this->idFromQuery($query, 
-            '/^http:\/\/orcid\.org\/(\d\d\d\d-){3}\d\d\d[0-9X]$/', 
-            '/^(\d\d\d\d-){3}\d\d\d[0-9X]$/'
-        );
+        $jskos = $this->uriSpaceService->query($query);
+        if (!$jskos) return;
 
         // get concept by ORCID number or URI
         if (isset($id)) {

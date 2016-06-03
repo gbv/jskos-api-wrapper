@@ -9,24 +9,31 @@ include_once __DIR__.'/../../vendor/autoload.php';
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\RDFMapping;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
 class IconclassService extends Service {
-    use IDTrait;
     
     protected $supportedParameters = ['notation'];
 
+    private $config;
+    private $uriSpaceService;
     private $rdfMapping;
 
     /**
-     * Initialize Mapping from YAML file.
+     * Initialize configuration and mapping from YAML file.
      */
     public function __construct() {
-        $this->rdfMapping = new RDFMapping(__DIR__.'/IconclassMapping.yaml');
+        $file = __DIR__.'/IconclassService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->rdfMapping = new RDFMapping($this->config);
         parent::__construct();
     }
 
     public function query($query) {
-        
+        # TODO: rawurldecode
+
         if (isset($query['uri']) and 
             preg_match('/^http:\/\/iconclass\.org\/(.+)$/', $query['uri'], $match)) {
             $notation = rawurldecode($match[1]);

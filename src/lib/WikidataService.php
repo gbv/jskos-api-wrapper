@@ -7,40 +7,44 @@
  */
 
 include realpath(__DIR__.'/../..') . '/vendor/autoload.php';
-include_once realpath(__DIR__).'/IDTrait.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
+use JSKOS\URISpaceService;
+use Symfony\Component\Yaml\Yaml;
 
 class WikidataService extends Service {
-    use IDTrait;
     
     protected $supportedParameters = ['notation'];
+
+    private $uriSpaceService;
+
+    public function __construct() {
+        $file = __DIR__.'/WikidataService.yaml';
+        $this->config = Yaml::parse(file_get_contents($file));
+        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+    }
 
     /**
      * Query via MediaWikiAPI. TODO: use SPARQL for complex queries
      */
     public function query($query) {
-        $id = $this->idFromQuery($query, 
-            '/^http:\/\/www\.wikidata\.org\/entity\/([PQ][0-9]+)$/', '/^([PQ][0-9]+)$/');
-
-        if (isset($id)) {
-            try {
-                $json = @file_get_contents("https://www.wikidata.org/wiki/Special:EntityData/$id.json");
-                $data = @json_decode($json);
-                $data = $data->entities->{$id};
-            } catch (Exception $e) {
-                error_log($e);
-            }
+        $concept = $this->uriSpaceService->query($query);
+        if (!$concept) return;
+        
+        try {
+            $url = "https://www.wikidata.org/wiki/Special:EntityData/"
+                 . $concept->notation[0] . ".json";
+            $json = @file_get_contents($url);
+            $data = @json_decode($json);
+            $data = $data->entities->{$concept->notation[0]};
+        } catch (Exception $e) {
+            error_log($e);
         }
+        if (!isset($data)) return;
 
-        if (!isset($data)) {
-            return new Page();
-        }
-
-        $concept = new Concept(["uri" => "http://www.wikidata.org/entity/$id"]);
         $concept->modified = $data->modified;
         
         foreach ($data->labels as $language => $value) {
