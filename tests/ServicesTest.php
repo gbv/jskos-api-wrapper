@@ -34,8 +34,11 @@ class ServicesTest extends PHPUnit_Framework_TestCase {
 
             if (isset($service['EXAMPLES'])) {
                 foreach($service['EXAMPLES'] as $example) {
+                    echo "  ?".http_build_query($example)."\n";
                     $response = $service['INSTANCE']->query($example);
-                    $this->assertTrue($response instanceof Item or $response instanceof Page );
+                    // expect non-empty result
+                    $this->assertTrue($response instanceof Item or
+                      ($response instanceof Page and $response->totalCount > 0));
                 }
             } else {
                 $response = $service['INSTANCE']->query([]);

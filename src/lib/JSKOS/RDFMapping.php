@@ -133,7 +133,7 @@ class RDFMapping
     }
 
     /**
-     * Silently load RDF from an URL.
+     * Silently try to load RDF from an URL.
      * @return EasyRdf_Resource|null
      */
     public static function loadRDF($url, $uri=null, $format=null)
@@ -141,8 +141,7 @@ class RDFMapping
         try {
             $rdf = \EasyRdf_Graph::newAndLoad($url, $format);
             return $rdf->resource($uri ? $uri : $url);
-        } catch (Exception $e) {
-            // TODO: this does not catch fatal EasyRdf_Exception?!
+        } catch (\Exception $e) {
             return;
         }
     }

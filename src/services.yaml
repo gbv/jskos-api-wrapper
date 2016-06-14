@@ -57,19 +57,19 @@
       - uri: http://bartoc.org/en/node/430
       - uri: http://bartoc.org/en/node/109
       - search: Library
--
-    CLASS: VIAF
-    prefLabel:
-        en: VIAF
-    altLabel:
-        en:
-            - Virtual International Authority File
-    notation:
-        - VIAF
-    url: http://www.viaf.org/
-    EXAMPLES:
-      - uri: http://viaf.org/viaf/87772061
-      - search: austen
+#-
+#    CLASS: VIAF
+#    prefLabel:
+#        en: VIAF
+#    altLabel:
+#        en:
+#            - Virtual International Authority File
+#    notation:
+#        - VIAF
+#    url: http://www.viaf.org/
+#    EXAMPLES:
+#      - uri: http://viaf.org/viaf/87772061
+#      - search: austen
 -
     CLASS: Iconclass
     uri: bartoc.org/en/node/459
