@@ -11,7 +11,7 @@
     ],
     "license": "GPL-3.0+",
     "require": {
-        "gbv/jskos": "^0.0.10",
+        "gbv/jskos": "^0.0.11",
         "easyrdf/easyrdf": "^0.9.1",
         "symfony/yaml": "^3.0",
         "mashape/unirest-php": "^3.0.2",
