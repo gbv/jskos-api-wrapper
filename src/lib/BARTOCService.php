@@ -9,6 +9,7 @@ include_once __DIR__.'/../../vendor/autoload.php';
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\ConceptScheme;
+use JSKOS\Registry;
 use JSKOS\Page;
 use JSKOS\Error;
 use JSKOS\RDFMapping;
@@ -86,7 +87,12 @@ class BARTOCService extends Service {
         $jskos = new ConceptScheme(['uri' => $uri]);
 
         $this->rdfMapping->apply($rdf, $jskos); 
-#        error_log($rdf->getGraph()->dump('text'));
+        # error_log($rdf->getGraph()->dump('text'));
+
+        # TODO: Extend registry-specific fields
+        if ($jskos->prefLabel) {
+            $jskos = new Registry($jskos);
+        }
 
         # map licenses
         foreach ( RDFMapping::getURIs($rdf, 'schema:license') as $license ) {

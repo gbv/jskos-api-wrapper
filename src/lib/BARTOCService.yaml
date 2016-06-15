@@ -49,3 +49,11 @@ extent:
     unique: true
     properties:
         - nkos:sizeNote
+
+# only relevant for registries
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - dc:title
+

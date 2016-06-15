@@ -57,6 +57,7 @@
       - uri: http://bartoc.org/en/node/430
       - uri: http://bartoc.org/en/node/109
       - search: Library
+      - notation: 1715 # registry
 -
     CLASS: VIAF
     prefLabel:
