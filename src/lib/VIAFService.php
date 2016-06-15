@@ -42,7 +42,7 @@ class VIAFService extends Service {
     }
 
     public function lookupEntity($uri) {
-        $rdf = RDFMapping::loadRDF($uri);
+        $rdf = RDFMapping::loadRDF("$uri/rdf.xml", $uri);
         if (!$rdf) return;
 
         # error_log($rdf->getGraph()->serialise('turtle'));
