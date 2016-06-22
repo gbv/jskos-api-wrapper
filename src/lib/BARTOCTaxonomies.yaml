@@ -1,0 +1,20 @@
+---
+ddc:
+    uri: http://bartoc.org/en/node/241
+    concepts:
+      - identifier: 
+            - http://bartoc.org/en/taxonomy/term/10647
+        uri: http://dewey.info/class/910
+        notation: 910
+        prefLabel:
+            en: geography & travel
+
+eurovoc:
+    uri: http://bartoc.org/en/node/15 
+    concepts:
+      - identifier:
+          - http://bartoc.org/en/taxonomy/term/11645
+        uri: http://eurovoc.europa.eu/1148
+        prefLabel:
+            en: geography
+

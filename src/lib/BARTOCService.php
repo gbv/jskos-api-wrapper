@@ -50,6 +50,7 @@ class BARTOCService extends Service {
         $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
         $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
         $this->kostypes = loadCSV( __DIR__.'/BARTOC/kostypes.csv', 'bartoc' );
+        $this->topics = loadCSV( __DIR__.'/BARTOC/topics.csv', 'bartoc' );
         parent::__construct();
     }
 
@@ -90,24 +91,37 @@ class BARTOCService extends Service {
         # error_log($rdf->getGraph()->dump('text'));
 
         # TODO: Extend registry-specific fields
-        if ($jskos->prefLabel) {
+        if ( empty(RDFMapping::getURIs($rdf, 'dct:subject')) ) {
             $jskos = new Registry($jskos);
         }
+        # error_log($jskos->json());
 
         # map licenses
         foreach ( RDFMapping::getURIs($rdf, 'schema:license') as $license ) {
             if (isset($this->licenses[$license])) {
                 $jskos->license[] = ['uri'=>$this->licenses[$license]['uri']];
-            } else {
-                $jskos->license[] = ['prefLabel'=>['en'=>'Unknown license']];
-                error_log("Unknown license: $license");
             }
         }
 
-        # map nkos type (TODO: provide as JSKOS)
-        foreach ( RDFMapping::getURIs($rdf, 'dc:type') as $type ) {
-            if (isset($this->kostypes[$type])) {
-                $jskos->type[] = $this->kostypes[$type]['nkos'];
+        # map bartoc topic URIs to Eurovoc and DDC URIs
+        if (!empty($jskos->subject)) {
+            foreach ( $jskos->subject as $i => $subject ) {
+                $uri = $subject->uri;
+                if (isset($this->topics[$uri])) {                
+                    $concept = new Concept([ 'uri' => $this->topics[$uri]['uri'] ]);
+                    $label =$this->topics[$uri]['label'];
+                    if ($label) $concept->prefLabel = ['en' => $label];
+                    $jskos->subject[$i] = $concept;
+                }
+            }
+        }
+
+        # map bartoc type URIs to NKOS type URIs
+        if (!empty($jskos->type)) {
+            foreach ( $jskos->type as $i => $type ) {
+                if (isset($this->kostypes[$type])) {
+                    $jskos->type[$i] = $this->kostypes[$type]['nkos'];
+                }
             }
         }
         
@@ -119,7 +133,9 @@ class BARTOCService extends Service {
                 error_log("Unknown language: $language");
             }
         }
-        
+
+        # try to find out names and languages
+
         $names = [];
         foreach ($rdf->allLiterals('schema:name') as $name) {
             $value = $name->getValue();

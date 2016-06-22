@@ -23,7 +23,7 @@ trait LanguageDetectorTrait
             $guess = static::$languageDetector->detect($text, count($languages)+2);
             $guess = array_intersect_key($guess, array_flip($languages));
             
-            error_log(print_r($guess,1));
+            # error_log(print_r($guess,1));
             arsort($guess);
             return key($guess);
             

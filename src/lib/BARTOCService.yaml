@@ -11,6 +11,13 @@ _uriSpace:
         uriSpace: http://bartoc.org/en/node/
         notationPattern: /^[0-9]+$/
 
+# JSKOS object fields
+
+type:
+    type: URI
+    properties:
+        - dc:type
+
 # JSKOS Item fields
 
 url:
