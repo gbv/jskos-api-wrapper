@@ -5,6 +5,7 @@ _ns:
     dct:    http://purl.org/dc/terms/
     foaf:   http://xmlns.com/foaf/0.1/
     nkos:   http://w3id.org/nkos#
+    skos:   http://www.w3.org/2004/02/skos/core#
 
 _uriSpace:
     Concept:
@@ -23,9 +24,9 @@ type:
 url:
     type: URI
     unique: true
-    properties:    
+    properties:
         - foaf:page
-          
+
 identifier:
     type: URI
     jskos: plain
@@ -57,7 +58,14 @@ extent:
     properties:
         - nkos:sizeNote
 
+scopeNote:
+    type: literal
+    _defaultLanguage: en
+    properties:
+        - skos:scopeNote
+
 # only relevant for registries
+
 prefLabel:
     type: literal
     unique: true

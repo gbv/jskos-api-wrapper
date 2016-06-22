@@ -8,6 +8,9 @@ namespace JSKOS;
  * The rules define which RDF properties will be used to fill which JSKOS 
  * fields (and the special keys _ns and _defaultLanguage).
  *
+ * _defaultLanguage is set to "und" by default. It can be used on root and
+ * on each mapping.
+ *
  * RDF data must be provided as EasyRdf_Resource (ARC2 may be added later).
  *
  * @license LGPL
@@ -97,9 +100,16 @@ class RDFMapping
                     }
                 } elseif ($type == 'literal') {
                     foreach ($rdf->allLiterals($rdfProperty) as $literal) {
-                        $value = (string)$literal;
-                        $language = $literal->getLang() 
-                                  ? $literal->getLang() : $this->defaultLanguage;
+                        $value = static::cleanString($literal);
+                        if (!isset($value)) continue;
+
+                        if ( $literal->getLang() ) {
+                            $language = $literal->getLang();
+                        } elseif ( isset($mapping['_defaultLanguage']) ) {
+                            $language = $mapping['_defaultLanguage'];
+                        } else {
+                            $language = $this->defaultLanguage;
+                        }
 
                         $languageMap = isset($jskos->$property) ? $jskos->$property : [];
 
@@ -113,7 +123,9 @@ class RDFMapping
                     }
                 } elseif ($type == 'plain') {
                     foreach ($rdf->allLiterals($rdfProperty) as $literal) {
-                        $value = (string)$literal;
+                        $value = static::cleanString($literal);
+                        if (!isset($value)) continue;
+
                         if (isset($mapping['pattern']) && !preg_match($mapping['pattern'], $value)) {
                             continue;
                         }
@@ -130,6 +142,14 @@ class RDFMapping
                 }
             }
         }
+    }
+
+    /**
+     * Clean up a string value by trimming whitespace and mapping empty strings to null.
+     */
+    public static function cleanString($string) {
+        $string = trim((string)$string);
+        return $string !== "" ? $string : null;
     }
 
     /**
