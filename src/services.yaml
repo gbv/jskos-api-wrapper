@@ -73,7 +73,7 @@
       - search: austen
 -
     CLASS: Iconclass
-    uri: bartoc.org/en/node/459
+    uri: http://bartoc.org/en/node/459
     url: http://www.iconclass.nl/
     identifier:
         - http://iconclass.org/rdf/2011/09/
@@ -86,4 +86,18 @@
         - notation: 52D1
         - notation: 25F23(+46) 
         - uri: http://iconclass.org/25F23(LION)(%2B46)
-
+-
+    CLASS: MDS
+    uri: http://bartoc.org/en/node/2040
+    identifier:
+        - http://www.wikidata.org/entity/Q25373158
+    url: https://www.librarything.com/mds/
+    prefLabel:
+        en: Melvil Decimal Classification
+    notation:
+        - MDS
+    license:
+        - uri: http://creativecommons.org/publicdomain/zero/1.0/
+    EXAMPLES:
+        - notation: 832
+        - uri: http://www.librarything.com/mds/569.8 
