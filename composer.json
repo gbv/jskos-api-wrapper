@@ -12,6 +12,7 @@
     "license": "GPL-3.0+",
     "require": {
         "gbv/jskos": "^0.0.12",
+        "gbv/orcid-jskos": "^0.1.1",
         "easyrdf/easyrdf": "^0.9.1",
         "symfony/yaml": "^3.0",
         "mashape/unirest-php": "^3.0.2",
@@ -20,9 +21,15 @@
     "require-dev": {
         "phpunit/phpunit": "~4.8"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/gbv/orcid-jskos.git"
+        }
+    ],
     "autoload": {
         "psr-4": {
-            "": "src/lib/",
+            "": [ "src/lib/", "src/" ],
             "JSKOS\\": "src/lib/JSKOS"
         }
     },

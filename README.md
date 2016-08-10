@@ -30,5 +30,5 @@ And accesed via <http://localhost:8080>. You can also start the server with
 
 # Installation
 
-Copy directory `vendors` and `wrappers` to a webserver with PHP enabled.
+Copy directory `vendors` and `src` to a webserver with PHP enabled.
 

@@ -40,6 +40,10 @@
 
 include '../vendor/autoload.php';
 
+if (file_exists('credentials.php')) {
+    include 'credentials.php';
+}
+ 
 use Symfony\Component\Yaml\Yaml;
 use JSKOS\ConceptScheme;
 
@@ -55,7 +59,7 @@ foreach ($services as $service)
     $missingSecrets = [];
     if (isset($service['SECRET'])) {
         foreach ($service['SECRET'] as $secret) {
-            if (!getenv($secret)) {
+            if (!getenv($secret) && !defined($secret)) {
                 error_log("missing secret $secret");
                 $missingSecrets[] = $secret;
             }
