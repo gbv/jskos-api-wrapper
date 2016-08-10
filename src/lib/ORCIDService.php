@@ -9,30 +9,33 @@ include_once __DIR__.'/../../vendor/autoload.php';
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
-use JSKOS\Error;
 use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
 class ORCIDService extends Service {
     use LuceneTrait;
 
     protected $supportedParameters = ['notation','search'];
 
-    private $config;
     private $uriSpaceService;
     private $client_id;
     private $client_secret;
 
     public function __construct() {
-        $file = __DIR__.'/ORCIDService.yaml';
-        $this->config = Yaml::parse(file_get_contents($file));
-        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
+        $this->uriSpaceService = new URISpaceService([
+            'Concept' => [
+                'uriSpace' => 'http:///orcid.org/',
+                'notationPattern' => '/^(\d\d\d\d-){3}\d\d\d[0-9X]$/'
+            ]
+        ]);
+        # TODO: get from config file, if given
         $this->client_id     = getenv('ORCID_CLIENT_ID');
         $this->client_secret = getenv('ORCID_CLIENT_SECRET');
         parent::__construct();
     }
 
+    // Get an OAuth access token
     protected function getOAuthToken() {
+        # TODO: use session to store the token
         if ($this->client_id and $this->client_secret) {
             $body = Unirest\Request\Body::form(
                 [ 
@@ -53,6 +56,33 @@ class ORCIDService extends Service {
         }
     }
 
+    // main method
+    public function query($request) {
+
+        // search for ORCID profiles
+        if (isset($request['search'])) {
+            $result = $this->searchProfiles($request['search']);
+            if ($result) {
+                $concepts = [];
+                foreach ($result->{'orcid-search-result'} as $bio) {
+                    $concepts[] = $this->mapProfile($bio->{'orcid-profile'});
+                }
+                return new Page($concepts,0,1,$result->{'num-found'});
+            }
+        }
+
+        // get ORCID profile by ORCID ID or ORCID URI
+        $jskos = $this->uriSpaceService->query($request);
+        if ($jskos && $jskos->notation[0]) {
+            $profile = $this->getProfile($jskos->notation[0]);
+            error_log(print_r($profile, 1));
+            $jskos = $this->mapProfile($profile);
+            return $jskos;
+        }
+
+    }
+
+    // get an indentified profile by ORCID ID
     protected function getProfile( $id )
     { 
         $token = $this->getOAuthToken();
@@ -71,6 +101,7 @@ class ORCIDService extends Service {
         }
     }
 
+    // search for an ORCID profile
     protected function searchProfiles( $query ) 
     {
         $token = $this->getOAuthToken();
@@ -82,6 +113,7 @@ class ORCIDService extends Service {
                 'Authorization' => "Bearer $token",
                 'Content-Type' => 'application/orcid+json'
             ],
+            # TODO: search in names only and use boosting
             [ 'q' => LuceneTrait::luceneQuery('text',$query) ]
         );
 
@@ -91,17 +123,21 @@ class ORCIDService extends Service {
     }
 
     /**
+     * Maps an ORCID profile from JSON/XML format to JSKOS.
+     *
      * See <https://members.orcid.org/api/xml-orcid-bio> for reference.
      */
     public function mapProfile($profile) {
         if (!$profile) return;
 
         $jskos = new Concept([
-            'uri' => $profile->{'orcid-identifier'}->{'uri'},
-            'notation' => [ $profile->{'orcid-identifier'}->{'path'} ],
+            'uri' => $profile->{'orcid-identifier'}->uri,
+            'notation' => [ $profile->{'orcid-identifier'}->path ],
         ]);
 
         $bio = $profile->{'orcid-bio'};
+
+        // names
         $details = $bio->{'personal-details'};
 
         $otherNames = [];
@@ -116,6 +152,7 @@ class ORCIDService extends Service {
             if ($creditName != $name) {
                 $otherNames[] = $name;
                 $name = $creditName;
+                # TODO: scopus id, researser ID etc.
             }
         }
 
@@ -129,39 +166,51 @@ class ORCIDService extends Service {
             }
         }
 
-        if (count($otherNames)) {
-            $jskos->altLabel = ['en' => $otherNames];
+        $jskos->altLabel = ['en' => $otherNames];
+
+        // biography
+        if ($bio->biography && strtolower($bio->biography->visibility) == 'public') {
+            $jskos->description['en'] = $bio->biography->value;
         }
+
+        // external website links
+        if ($bio->{'researcher-urls'}) {
+            foreach ($bio->{'researcher-urls'}->{'researcher-url'} as $url) {
+                $name = $url->{'url-name'}->value;
+                $url  = $url->url->value;
+
+                error_log($url);
+
+                if (preg_match('/^https?:\/\/\w+\.wikipedia.org\/wiki\/.+/i', $url)) {
+                    $jskos->subjectOf[] = new Concept([
+                        "url" => $url
+                    ]);
+                    # TOOD: map to Wikidata URI
+                } else { # TODO: detect more type of known URLs, for instance Twitter
+                    $jskos->url = $url;
+                }
+            }
+        }
+
+        // contact details
+        # TODO (email and address)
+
+        // keywords
+        if ($bio->keywords->keyword) {
+            foreach ($bio->keywords->keyword as $keywords) {
+                // often wrongly split by comma
+                foreach (preg_split('/,\s*/', $keywords->value) as $keyword) {
+                    $jskos->subject[] = new Concept([
+                        "prefLabel" => [ "en" => $keyword ] 
+                    ]);
+                }
+            }
+        }
+
+        // external identifiers
+        # TODO: scopus id, researser ID etc.
 
         return $jskos;
     }
 
-    /**
-     * Perform query.
-     */ 
-    public function query($query) {
-        $jskos = $this->uriSpaceService->query($query);
-        if (!$jskos) return;
-
-        // get concept by ORCID number or URI
-        if (isset($id)) {
-            $profile = $this->getProfile($id);
-            $jskos = $this->mapProfile($profile);
-            return $jskos;
-        } 
-        // search ORCID profile
-        elseif(isset($query['search'])) {
-            $result = $this->searchProfiles($query['search']);
-            if (!$result) return;
-
-            $concepts = [];
-            foreach ($result->{'orcid-search-result'} as $bio) {
-                $concepts[] = $this->mapProfile($bio->{'orcid-profile'});
-            }
-
-            return new Page($concepts,0,1,$result->{'num-found'});
-        }
-
-        return;
-    }
 }
