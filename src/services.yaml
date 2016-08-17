@@ -53,6 +53,7 @@
     prefLabel:
         en: BARTOC
     url: http://bartoc.org/
+    uri: http://bartoc.org/en/node/2054
     EXAMPLES:
       - uri: http://bartoc.org/en/node/430
       - uri: http://bartoc.org/en/node/109
@@ -67,6 +68,7 @@
             - Virtual International Authority File
     notation:
         - VIAF
+    uri: http://bartoc.org/en/node/2053
     url: http://www.viaf.org/
     EXAMPLES:
       - uri: http://viaf.org/viaf/87772061
