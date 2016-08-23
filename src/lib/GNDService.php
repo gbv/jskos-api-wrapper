@@ -46,6 +46,7 @@ class GNDService extends Service
         $rdf = RDFMapping::loadRDF($jskos->uri ."/about/lds", $jskos->uri);
         if (!$rdf) return;
 
+        # TODO: fix date format
         # error_log($rdf->getGraph()->serialise('turtle'));
 
         $this->rdfMapping->apply($rdf, $jskos); 
