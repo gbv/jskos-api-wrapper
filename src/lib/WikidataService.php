@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class WikidataService extends Service {
     
-    protected $supportedParameters = ['notation'];
+    protected $supportedParameters = ['notation','uri'];
 
     private $uriSpaceService;
 
@@ -52,7 +52,7 @@ class WikidataService extends Service {
         }
 
         foreach ($data->descriptions as $language => $value) {
-            $concept->scopeNote[$language] = $value->value;
+            $concept->scopeNote[$language][] = $value->value;
         }
 
         foreach ($data->aliases as $language => $values) {
@@ -63,34 +63,39 @@ class WikidataService extends Service {
         
         # TODO: type (item or property) wikibase:Item / wikibase:Property
 
-        # TODO: more claims
-
         # depiction
         if (isset($data->claims->P18)) {
             # TODO: only use "truthy" statements
             foreach ($data->claims->P18 as $statement) {
                 $snak = $statement->mainsnak;
                 if ($snak->datatype == "commonsMedia") {
-                    $concept->depiction = "http://commons.wikimedia.org/wiki/Special:FilePath/"
+                    $concept->depiction[] = "http://commons.wikimedia.org/wiki/Special:FilePath/"
                         . rawurlencode($snak->datavalue->value);
                 }
             }
         }
 
-        # subclass of (TODO: reverse)
-        if (isset($data->claims->P279)) {
-            foreach ($data->claims->P279 as $statement) {
-                $snak = $statement->mainsnak;
-                if ($snak->datatype == "wikibase-item") {
-                    $id = $snak->datavalue->value->{'numeric-id'};
-                    $concept->broader[] = new Concept(["uri" => "http://www.wikidata.org/entity/Q$id"]);
-                }
-            }
-        }
+        # TODO: more claims
+        static::mapItemClaims($data, $concept, 'P279', 'broader');
+        static::mapItemClaims($data, $concept, 'P155', 'previous');
+        static::mapItemClaims($data, $concept, 'P156', 'next');
 
         # TODO: sitelinks
 
         return $concept;
     }
 
+    static function mapItemClaims( $data, $concept, $pid, $field ) {
+        if (isset($data->claims->$pid)) {
+            foreach ($data->claims->$pid as $statement) {
+                $snak = $statement->mainsnak;
+                if ($snak->datatype == "wikibase-item") {
+                    $id = $snak->datavalue->value->{'numeric-id'};
+                    $set = $concept->$field;
+                    $set[] = new Concept(["uri" => "http://www.wikidata.org/entity/Q$id"]);
+                    $concept->$field = $set;
+                }
+            }
+        }
+    }
 }

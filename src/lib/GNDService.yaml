@@ -184,7 +184,6 @@ related:
         - gnd:relatedPerson
         - gnd:relatedSubjecHeading
         - gnd:relatedTerm
-        - gnd:relatedTerm
         - gnd:topic
 
 previous:
