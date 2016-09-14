@@ -8,6 +8,7 @@ include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Service;
 use JSKOS\Concept;
+use JSKOS\ConceptScheme;
 use JSKOS\RDFMapping;
 use JSKOS\URISpaceService;
 use Symfony\Component\Yaml\Yaml;
@@ -56,6 +57,10 @@ class IconclassService extends Service {
 
         $jskos = new Concept([ 'uri' => $uri, 'notation' => [$notation] ]);
         $this->rdfMapping->apply($rdf, $jskos); 
+
+        $jskos->inScheme[] = new ConceptScheme([
+          'uri' => 'http://bartoc.org/en/node/459' 
+        ]);
 
         return $jskos;
     }

@@ -28,6 +28,7 @@ inScheme:
 
 prefLabel:
     type: literal
+    unique: true
     properties:
         - skos:prefLabel
 
