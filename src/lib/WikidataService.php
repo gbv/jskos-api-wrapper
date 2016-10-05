@@ -12,26 +12,17 @@ use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\Error;
-use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
-class WikidataService extends Service {
+class WikidataService extends JSKOS\ConfiguredService {
+    public static $CONFIG_DIR = __DIR__;
     
     protected $supportedParameters = ['notation','uri'];
-
-    private $uriSpaceService;
-
-    public function __construct() {
-        $file = __DIR__.'/WikidataService.yaml';
-        $this->config = Yaml::parse(file_get_contents($file));
-        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
-    }
 
     /**
      * Query via MediaWikiAPI. TODO: use SPARQL for complex queries
      */
     public function query($query) {
-        $concept = $this->uriSpaceService->query($query);
+        $concept = $this->queryUriSpace($query);
         if (!$concept) return;
         
         try {

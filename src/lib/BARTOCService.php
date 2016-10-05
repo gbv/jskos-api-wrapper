@@ -11,10 +11,7 @@ use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\Registry;
 use JSKOS\Page;
-use JSKOS\Error;
 use JSKOS\RDFMapping;
-use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
 // TODO: move to another place
 function loadCSV( $file, $key=null ) {
@@ -27,35 +24,27 @@ function loadCSV( $file, $key=null ) {
     return $rows;
 }
 
-class BARTOCService extends Service {
+class BARTOCService extends JSKOS\RDFBasedService {
+    public static $CONFIG_DIR = __DIR__;
+
     use LanguageDetectorTrait;
     
     protected $supportedParameters = ['notation','search'];
 
-    private $config;
-    private $uriSpaceService;
-    private $rdfMapping;
     private $languages = [];
     private $licenses  = [];
     private $kostypes  = [];
  
-    /**
-     * Initialize configuration and mapping from YAML file.
-     */
     public function __construct() {
-        $file = __DIR__.'/BARTOCService.yaml';
-        $this->config = Yaml::parse(file_get_contents($file));
-        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
-        $this->rdfMapping = new RDFMapping($this->config);
+        parent::__construct();
         $this->languages = loadCSV( __DIR__.'/BARTOC/languages.csv', 'bartoc' );
         $this->licenses = loadCSV( __DIR__.'/BARTOC/licenses.csv', 'bartoc' );
         $this->kostypes = loadCSV( __DIR__.'/BARTOC/kostypes.csv', 'bartoc' );
         $this->topics = loadCSV( __DIR__.'/BARTOC/topics.csv', 'bartoc' );
-        parent::__construct();
     }
 
     public function query($query) {
-        $jskos = $this->uriSpaceService->query($query);
+        $jskos = $this->queryUriSpace($query);
         if ($jskos) {
             return $this->entityLookup($jskos->uri);
         } elseif (isset($query['search'])) {
@@ -87,7 +76,7 @@ class BARTOCService extends Service {
 
         $jskos = new ConceptScheme(['uri' => $uri]);
 
-        $this->rdfMapping->apply($rdf, $jskos); 
+        $this->applyRDFMapping($rdf, $jskos); 
         # error_log($rdf->getGraph()->dump('text'));
 
         # TODO: Extend registry-specific fields

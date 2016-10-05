@@ -1,0 +1,35 @@
+---
+_ns:
+    skos: http://www.w3.org/2004/02/skos/core#
+ 
+_uriSpace:
+    Concept:
+        uriSpace: http://glottolog.org/resource/languoid/id/
+        notationPattern: /^[a-z]{4}[0-9]{4}$/
+
+broader:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:broader
+
+narrower:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:narrower
+
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - skos:prefLabel
+
+altLabel:
+    type: literal
+    properties:
+        - skos:altLabel
+
+# TODO lat/long
+# TODO ISO-Code
+

@@ -6,34 +6,17 @@
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\Page;
 use JSKOS\RDFMapping;
-use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
-class VIAFService extends Service {
-    
+class VIAFService extends JSKOS\RDFBasedService {
+    public static $CONFIG_DIR = __DIR__;
+ 
     protected $supportedParameters = ['notation','search'];
 
-    private $config;
-    private $uriSpaceService;
-    private $rdfMapping;
-
-    /**
-     * Initialize configuration and mapping from YAML file.
-     */
-    public function __construct() {
-        $file = __DIR__.'/VIAFService.yaml';
-        $this->config = Yaml::parse(file_get_contents($file));
-        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
-        $this->rdfMapping = new RDFMapping($this->config);
-        parent::__construct();
-    }
-
     public function query($query) {
-        $jskos = $this->uriSpaceService->query($query);
+        $jskos = $this->queryUriSpace($query);
         if ($jskos and $jskos->uri) {
             return $this->lookupEntity($jskos->uri);
         } elseif (isset($query['search'])) {
@@ -48,7 +31,7 @@ class VIAFService extends Service {
         # error_log($rdf->getGraph()->serialise('turtle'));
 
         $jskos = new Concept([ 'uri' => $uri ]);
-        $this->rdfMapping->apply($rdf, $jskos); 
+        $this->applyRdfMapping($rdf, $jskos); 
 
         return $jskos;
     }

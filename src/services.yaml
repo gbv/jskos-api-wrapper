@@ -89,6 +89,19 @@
         - notation: 25F23(+46) 
         - uri: http://iconclass.org/25F23(LION)(%2B46)
 -
+    CLASS: Glottolog
+    uri: http://bartoc.org/en/node/1678
+    identifier:
+        - http://www.wikidata.org/entity/Q17165062
+    url: http://glottolog.org/
+    prefLabel:
+        en: Glottolog
+    license:
+        - uri: http://creativecommons.org/licenses/by-sa/3.0/
+    EXAMPLES:
+        - notation: nucl1302
+        - search: German
+-
     CLASS: MDS
     uri: http://bartoc.org/en/node/2040
     identifier:

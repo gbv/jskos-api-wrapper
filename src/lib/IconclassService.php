@@ -6,31 +6,14 @@
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\RDFMapping;
-use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
-class IconclassService extends Service {
-    
+class IconclassService extends JSKOS\RDFBasedService {
+    public static $CONFIG_DIR = __DIR__;
+ 
     protected $supportedParameters = ['notation'];
-
-    private $config;
-    private $uriSpaceService;
-    private $rdfMapping;
-
-    /**
-     * Initialize configuration and mapping from YAML file.
-     */
-    public function __construct() {
-        $file = __DIR__.'/IconclassService.yaml';
-        $this->config = Yaml::parse(file_get_contents($file));
-        $this->uriSpaceService = new URISpaceService($this->config['_uriSpace']);
-        $this->rdfMapping = new RDFMapping($this->config);
-        parent::__construct();
-    }
 
     public function query($query) {
         # TODO: rawurldecode
@@ -56,7 +39,7 @@ class IconclassService extends Service {
         if (!$rdf or $rdf->getGraph()->countTriples() < 3) return;
 
         $jskos = new Concept([ 'uri' => $uri, 'notation' => [$notation] ]);
-        $this->rdfMapping->apply($rdf, $jskos); 
+        $this->applyRdfMapping($rdf, $jskos); 
 
         $jskos->inScheme[] = new ConceptScheme([
           'uri' => 'http://bartoc.org/en/node/459' 

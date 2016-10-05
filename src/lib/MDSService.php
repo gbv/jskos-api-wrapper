@@ -10,7 +10,6 @@ include_once __DIR__.'/../../vendor/autoload.php';
 use JSKOS\Service;
 use JSKOS\Concept;
 use JSKOS\URISpaceService;
-use Symfony\Component\Yaml\Yaml;
 
 class MDSService extends Service
 {
