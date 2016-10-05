@@ -20,5 +20,7 @@ deploy:
     provider: heroku
     api_key:
         secure: RY2mFmNj5rjLJT7UQuxK+Cy2XRlzyZq8QBqn32dop89esEBR2BncQV+UF/enUamInIH3aESRoqC7XVvC+tGf9e9DeprOmg5edPkEMSlFiw3SRcnyiToIT9rO1MtCgWI04L8TFqBUZiPFYu9fbCiD4wciKhAQ4qkd5Uiie+IDYUUyyV20TvDanoS19vHc7fyT2hhq1OodAqiXjsjsG8YTN8lBn1wtgteZvZtt71Iqh3V/KQH4YRBV/jPAOKNtF2ClD8TpczxopQx4L6rdyHSynqvQTWN6CdxUSbCsOpLDZrAur3Mta6XWqFvrhSpUrDJJjQxpIm+FWPDPYzwwJpdC3/b1xu8seLauTDtedAi530tKU4mxzHmSRWErwKMPTvUcCk+5V/2TCs1N1w/d3ujB16zHW8FiiMmHrjTxUxIHb129lIMr/xsLogvZAPtr/kQt3ovPuRaATqru4pgyi5KZE7mGZwD7kJffLUNtVg9zola870o6t3BREegN2E0o0lfLDudN1gViIshRr9fwh99BiVk0ukDx85PhSxcWkerR81/+asr1pEWZQNo/XS4BKIojoN8jR2RqUtVozE0EQRjKYDcR5kHXbmjdju9rj651CI/D0BsrCSuPLPYkuvfC3ANgjhnXyc0hG7HxxzNgPNF9X25Od8ODzI4uj1uSFc86Z1c=
-    on: master
+    on:
+        branch: master
+        php: 7.0
     skip_cleanup: true
