@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "31ceed00b24d122068098f24e5b0bd10",
+    "hash": "305d32176794c5229b8a3a60e6ab7e64",
+    "content-hash": "115f1f80e994b0dd59ab08238bfc2cf1",
     "packages": [
         {
             "name": "easyrdf/easyrdf",
@@ -70,23 +71,24 @@
         },
         {
             "name": "gbv/jskos",
-            "version": "0.0.12",
+            "version": "0.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gbv/jskos-php.git",
-                "reference": "1e3e83872d79d6befe57ec43e4d7f24994975876"
+                "reference": "739a82353d6bd1a23530b38ded8dbe08e1a5ccf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gbv/jskos-php/zipball/1e3e83872d79d6befe57ec43e4d7f24994975876",
-                "reference": "1e3e83872d79d6befe57ec43e4d7f24994975876",
+                "url": "https://api.github.com/repos/gbv/jskos-php/zipball/739a82353d6bd1a23530b38ded8dbe08e1a5ccf9",
+                "reference": "739a82353d6bd1a23530b38ded8dbe08e1a5ccf9",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6"
+                "php": ">=5.6",
+                "symfony/yaml": ">=2.8.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "^1.11",
+                "friendsofphp/php-cs-fixer": "^1.12",
                 "jakub-onderka/php-console-highlighter": "~0.3",
                 "jakub-onderka/php-parallel-lint": "~0.9",
                 "phpunit/phpunit": "~4.8"
@@ -109,24 +111,24 @@
             "keywords": [
                 "SKOS"
             ],
-            "time": "2016-08-02 12:31:06"
+            "time": "2016-10-18 10:50:47"
         },
         {
             "name": "gbv/orcid-jskos",
-            "version": "0.1.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gbv/orcid-jskos.git",
-                "reference": "c512ddb08a8d627dcc5e0998953482de6136e923"
+                "reference": "89e5ed425ec9a1555263ede8ba1855aaab007d0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gbv/orcid-jskos/zipball/c512ddb08a8d627dcc5e0998953482de6136e923",
-                "reference": "c512ddb08a8d627dcc5e0998953482de6136e923",
+                "url": "https://api.github.com/repos/gbv/orcid-jskos/zipball/89e5ed425ec9a1555263ede8ba1855aaab007d0f",
+                "reference": "89e5ed425ec9a1555263ede8ba1855aaab007d0f",
                 "shasum": ""
             },
             "require": {
-                "gbv/jskos": "^0.0.12",
+                "gbv/jskos": "~0.0.12",
                 "mashape/unirest-php": "^3.0"
             },
             "type": "project",
@@ -135,6 +137,7 @@
                     "": "src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "AGPL"
             ],
@@ -147,26 +150,22 @@
             "description": "JSKOS wrapper to the public ORCID API",
             "keywords": [
                 "JSKOS",
-                "ORCID"
+                "orcid"
             ],
-            "support": {
-                "source": "https://github.com/gbv/orcid-jskos/tree/0.1.1",
-                "issues": "https://github.com/gbv/orcid-jskos/issues"
-            },
-            "time": "2016-08-10 11:43:27"
+            "time": "2016-10-18 11:11:05"
         },
         {
             "name": "mashape/unirest-php",
-            "version": "v3.0.3",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mashape/unirest-php.git",
-                "reference": "5d304c6f6c0a6a75cdf4149005bd19479d3e6b1e"
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mashape/unirest-php/zipball/5d304c6f6c0a6a75cdf4149005bd19479d3e6b1e",
-                "reference": "5d304c6f6c0a6a75cdf4149005bd19479d3e6b1e",
+                "url": "https://api.github.com/repos/Mashape/unirest-php/zipball/842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
                 "shasum": ""
             },
             "require": {
@@ -183,7 +182,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Unirest": "src"
+                    "Unirest\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -199,20 +198,20 @@
                 "https",
                 "rest"
             ],
-            "time": "2016-05-31 16:59:14"
+            "time": "2016-08-11 17:49:21"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.3",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "1819adf2066880c7967df7180f4f662b6f0567ac"
+                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/1819adf2066880c7967df7180f4f662b6f0567ac",
-                "reference": "1819adf2066880c7967df7180f4f662b6f0567ac",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/368b9738d4033c8b93454cb0dbd45d305135a6d3",
+                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3",
                 "shasum": ""
             },
             "require": {
@@ -248,7 +247,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-17 14:02:08"
+            "time": "2016-09-25 08:27:07"
         },
         {
             "name": "webmil/text-language-detect",
@@ -411,16 +410,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd"
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/9270140b940ff02e58ec577c237274e92cd40cdd",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/8331b5efe816ae05461b7ca1e721c01b46bafb3e",
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e",
                 "shasum": ""
             },
             "require": {
@@ -452,7 +451,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-06-10 09:48:41"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -1052,23 +1051,23 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.7",
+            "version": "1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "4e8f0da10ac5802913afc151413bc8c53b6c2716"
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/4e8f0da10ac5802913afc151413bc8c53b6c2716",
-                "reference": "4e8f0da10ac5802913afc151413bc8c53b6c2716",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/be2c607e43ce4c89ecd60e75c6a85c126e754aea",
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.4"
+                "phpunit/phpunit": "^4.8 || ^5.0"
             },
             "type": "library",
             "extra": {
@@ -1098,7 +1097,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-05-17 03:18:57"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
