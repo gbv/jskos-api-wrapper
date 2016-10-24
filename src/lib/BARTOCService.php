@@ -56,7 +56,7 @@ class BARTOCService extends JSKOS\RDFBasedService {
 
     public function entityLookup($uri) {
         $rdf = RDFMapping::loadRDF($uri);
-        if (!$rdf) return;
+        if (!$rdf || empty($rdf->getGraph()->propertyUris($uri))) return;
 
         // FIXME: There is a bug in Drupal RDFa output. This is a dirty hack to repair.
         foreach ( ['dct:subject', 'dct:type', 'dct:language', 'dct:format', 'schema:license'] 
@@ -77,13 +77,12 @@ class BARTOCService extends JSKOS\RDFBasedService {
         $jskos = new ConceptScheme(['uri' => $uri]);
 
         $this->applyRDFMapping($rdf, $jskos); 
-        # error_log($rdf->getGraph()->dump('text'));
+         error_log($rdf->getGraph()->dump('text'));
 
         # TODO: Extend registry-specific fields
         if ( empty(RDFMapping::getURIs($rdf, 'dct:subject')) ) {
             $jskos = new Registry($jskos);
         }
-        # error_log($jskos->json());
 
         # map licenses
         foreach ( RDFMapping::getURIs($rdf, 'schema:license') as $license ) {
