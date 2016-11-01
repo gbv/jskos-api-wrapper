@@ -74,15 +74,24 @@ class BARTOCService extends JSKOS\RDFBasedService {
             }
         }
 
-        $jskos = new ConceptScheme(['uri' => $uri]);
+        // neither concept schemes nor registry
+        $uris = RDFMapping::getURIs($rdf, 'rdf:type');
+        if (!in_array("http://schema.org/Dataset", $uris)) {
+            return;
+        }
+
+        if ( empty(RDFMapping::getURIs($rdf, 'dct:subject')) ) {
+            $jskos = new Registry(['uri' => $uri ]);
+        } else {
+            $jskos = new ConceptScheme(['uri' => $uri]);
+        }
 
         $this->applyRDFMapping($rdf, $jskos); 
-         error_log($rdf->getGraph()->dump('text'));
 
-        # TODO: Extend registry-specific fields
-        if ( empty(RDFMapping::getURIs($rdf, 'dct:subject')) ) {
-            $jskos = new Registry($jskos);
-        }
+        # Remove Wikidata link from URL field
+        $urls = RDFMapping::getURIs($rdf, 'schema:url');
+        $urls = preg_grep("/^http:\/\/www\.wikidata\.org\/entity/", $urls, PREG_GREP_INVERT);
+        if (!empty($urls)) $jskos->url = $urls[0];
 
         # map licenses
         foreach ( RDFMapping::getURIs($rdf, 'schema:license') as $license ) {
@@ -163,10 +172,17 @@ class BARTOCService extends JSKOS\RDFBasedService {
 
         # try to detect language
         if (isset($jskos->prefLabel['und'])) {
-            $guess = $this->detectLanguage( $jskos->prefLabel['und'], $jskos->languages );
+            $label = $jskos->prefLabel['und'];
+            $guess = $this->detectLanguage( $label, $jskos->languages );
             if ($guess) {
-                $jskos->prefLabel[$guess] = $jskos->prefLabel['und'];
+                $jskos->prefLabel[$guess] = $label;
                 unset($jskos->prefLabel['und']);
+            } else {
+                # remove if same label in known language exists
+                unset($jskos->prefLabel['und']);
+                if (!in_array($label, $jskos->prefLabel)) {
+                    $jskos->prefLabel['und'] = $label;
+                }
             }
         }
 
