@@ -88,6 +88,19 @@ class BARTOCService extends JSKOS\RDFBasedService {
 
         $this->applyRDFMapping($rdf, $jskos); 
 
+
+        # registry properties (TODO: fix wrong RDF at BARTOC instead)
+        $uris = RDFMapping::getURIs($rdf, 'rdfs:label');
+        if (in_array("http://bartoc.org/en/taxonomy/term/51230", $uris)) {
+            $jskos->type[] = 'http://bartoc.org/en/taxonomy/term/51230';
+        }
+        $api = $rdf->allLiterals("nkos:serviceOffered");
+        if (!empty($api)) {
+            $jskos->API = [ [ "url" => (string)$api[0] ] ];
+        }
+
+
+
         # Remove Wikidata link from URL field
         $urls = RDFMapping::getURIs($rdf, 'schema:url');
         $urls = preg_grep("/^http:\/\/www\.wikidata\.org\/entity/", $urls, PREG_GREP_INVERT);
