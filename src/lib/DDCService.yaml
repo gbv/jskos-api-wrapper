@@ -1,0 +1,37 @@
+_ns:
+    skos: http://www.w3.org/2004/02/skos/core#
+
+_uriSpace:
+    Concept:
+        uriSpace: http://dewey.info/class/
+        notationPattern: '/^( \d{1,3}(-\d{1,3})? | \d{3}\.\d+(-\d{3}\.\d+)? | T?([12456]|3[ABC]?)--\d+(-\d+)?) (\/e23\/)? $/x'
+
+notation:
+    type: plain
+    properties:
+        - skos:notation
+
+prefLabel:
+    type: literal
+    unique: true
+    properties:
+        - skos:prefLabel
+
+broader:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:broader
+
+narrower:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:narrower
+
+inScheme:
+    type: URI
+    jskos: Concept
+    properties:
+        - skos:inScheme
+

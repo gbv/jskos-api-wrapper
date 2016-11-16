@@ -116,3 +116,22 @@
     EXAMPLES:
         - notation: 832
         - uri: http://www.librarything.com/mds/569.8 
+-
+    CLASS: DDC
+    uri: http://bartoc.org/en/node/241
+    identifier:
+        - http://www.wikidata.org/entity/Q48460
+    prefLabel:
+        en: Dewey Decimal Classification
+    notation:
+        - DDC
+    license:
+        - uri: http://creativecommons.org/publicdomain/by-nc-nd/1.0/
+    creator:
+        - uri: http://viaf.org/viaf/156508705
+          prefLabel:
+            en: OCLC Online Computer Library Center, Inc.
+    EXAMPLES:
+        - notation: 832
+        - uri: http://dewey.info/class/2--73/e23/
+
