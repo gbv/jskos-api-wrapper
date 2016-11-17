@@ -8,6 +8,7 @@
 include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\RDFMapping;
+use JSKOS\Concept;
 
 class DDCService extends JSKOS\RDFBasedService {
     public static $CONFIG_DIR = __DIR__;
@@ -49,6 +50,19 @@ class DDCService extends JSKOS\RDFBasedService {
 
 
         $this->applyRdfMapping($rdf, $jskos); 
+
+        // add synthesized number components
+        foreach ( $rdf->allResources('mads:componentList') as $composed ) {
+            foreach ( $composed as $c ) {
+                # FIXME: set-insert for jskos-broader
+                $uri = $c->getUri();
+                $dup = false;
+                foreach ($jskos->broader as $b) {
+                    if ($b->uri == $uri) $dup = true;
+                }
+                if (!$dup) $jskos->broader[] = new Concept(['uri' => $uri]);
+            }
+        }        
 
         // add DDC specific types
         $notation = $jskos->notation[0];

@@ -1,5 +1,6 @@
 _ns:
     skos: http://www.w3.org/2004/02/skos/core#
+    mads: http://www.loc.gov/mads/rdf/v1#
 
 _uriSpace:
     Concept:
@@ -35,3 +36,9 @@ inScheme:
     properties:
         - skos:inScheme
 
+# included but not ordered
+#ancestors:
+#    type: URI
+#    jskos: Concept
+#    properties:
+#        - skos:broaderTransitive
