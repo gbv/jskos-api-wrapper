@@ -39,13 +39,6 @@ subject:
     properties:
         - dct:subject
 
-created:
-    type: plain
-    unique: true
-    pattern: /^\d\d\d\d$/
-    properties:
-        - dct:created
-
 creator:
     type: URI
     jskos: Concept
@@ -71,4 +64,21 @@ prefLabel:
     unique: true
     properties:
         - dc:title
+
+# JSKOS Concept fields
+
+startDate:
+    type: plain
+    unique: true
+    pattern: /^\d\d\d\d$/
+    properties:
+        - dct:created
+        - schema:startDate
+
+endDate:
+    type: plain
+    unique: true
+    pattern: /^\d\d\d\d$/
+    properties:
+        - schema:endDate
 
