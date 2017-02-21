@@ -117,6 +117,17 @@
         - notation: 832
         - uri: http://www.librarything.com/mds/569.8 
 -
+    CLASS: ChEBI
+    uri: http://bartoc.org/en/node/558
+    identifier:
+        - http://www.wikidata.org/entity/Q902623
+    prefLabel:
+        en: Chemical Entities of Biological Interest
+    notation:
+        - ChEBI
+    EXAMPLES:
+        - uri: http://purl.obolibrary.org/obo/CHEBI_33663
+-
     CLASS: DDC
     uri: http://bartoc.org/en/node/241
     identifier:
