@@ -8,9 +8,9 @@ include_once __DIR__.'/../../vendor/autoload.php';
 
 use JSKOS\Concept;
 use JSKOS\ConceptScheme;
-use JSKOS\RDFMapping;
+use JSKOS\RDF\RDFMapping;
 
-class IconclassService extends JSKOS\RDFBasedService {
+class IconclassService extends JSKOS\RDF\RDFMappingService {
     public static $CONFIG_DIR = __DIR__;
  
     protected $supportedParameters = ['notation'];

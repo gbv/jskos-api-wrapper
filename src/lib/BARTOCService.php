@@ -11,7 +11,7 @@ use JSKOS\Concept;
 use JSKOS\ConceptScheme;
 use JSKOS\Registry;
 use JSKOS\Page;
-use JSKOS\RDFMapping;
+use JSKOS\RDF\RDFMapping;
 
 // TODO: move to another place
 function loadCSV( $file, $key=null ) {
@@ -24,7 +24,7 @@ function loadCSV( $file, $key=null ) {
     return $rows;
 }
 
-class BARTOCService extends JSKOS\RDFBasedService {
+class BARTOCService extends JSKOS\RDF\RDFMappingService {
     public static $CONFIG_DIR = __DIR__;
 
     use LanguageDetectorTrait;

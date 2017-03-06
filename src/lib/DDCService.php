@@ -7,10 +7,10 @@
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use JSKOS\RDFMapping;
 use JSKOS\Concept;
+use JSKOS\RDF\RDFMapping;
 
-class DDCService extends JSKOS\RDFBasedService {
+class DDCService extends JSKOS\RDF\RDFMappingService {
     public static $CONFIG_DIR = __DIR__;
     
     protected $supportedParameters = ['notation'];

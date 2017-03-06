@@ -8,9 +8,9 @@
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use JSKOS\RDFMapping;
+use JSKOS\RDF\RDFMapping;
 
-class GNDService extends JSKOS\RDFBasedService {
+class GNDService extends JSKOS\RDF\RDFMappingService {
     public static $CONFIG_DIR = __DIR__;
     
     protected $supportedParameters = ['notation'];

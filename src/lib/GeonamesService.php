@@ -6,9 +6,9 @@
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
-use JSKOS\RDFMapping;
+use JSKOS\RDF\RDFMapping;
 
-class GeonamesService extends \JSKOS\RDFBasedService {
+class GeonamesService extends JSKOS\RDF\RDFMappingService {
     public static $CONFIG_DIR = __DIR__;
 
     protected $supportedParameters = ['notation'];
